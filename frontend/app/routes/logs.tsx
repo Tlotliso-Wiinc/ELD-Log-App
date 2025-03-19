@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ArrowLeft, Plus } from "lucide-react";
 
 interface LogEntry {
   id: string;
@@ -23,14 +24,14 @@ const mockLogs: LogEntry[] = [
 export default function Logs() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
+      <div className="max-w-6xl mx-auto bg-white rounded-xs shadow-md p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Log History</h2>
+          <h2 className="text-xl font-bold text-gray-800">Log History</h2>
           <Link
             to="/"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
+            className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700 transition-colors text-sm"
           >
-            Add New Log
+            <Plus size={15} className="inline-block" /> Add New Log
           </Link>
         </div>
         <div className="overflow-x-auto">
