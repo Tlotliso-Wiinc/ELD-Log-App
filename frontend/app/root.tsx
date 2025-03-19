@@ -43,12 +43,20 @@ function NavBar() {
             {time}
           </span>
         </div>
-        <Link
-          to="/profile"
-          className="text-white hover:bg-gray-700 px-4 py-2 rounded-md transition-colors"
-        >
-          Driver Profile
-        </Link>
+        <div className="flex items-center space-x-4">
+          <Link
+            to="/logs"
+            className="text-white hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors border border-white"
+          >
+            Logs
+          </Link>
+          <Link
+            to="/profile"
+            className="text-white hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors border border-white"
+          >
+            Driver Profile
+          </Link>
+        </div>
       </div>
     </nav>
   );

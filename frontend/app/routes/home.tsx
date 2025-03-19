@@ -24,9 +24,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="max-w-2xl mx-auto py-8 px-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">New Log Entry</h2>
+      <div className="max-w-md mx-auto py-8 px-4">
+        <div className="bg-white rounded-xs shadow-md p-6">
+          <h2 className="text-xl font-bold mb-6 text-gray-800 text-center">New Log Entry</h2>
+          <hr className="mb-6" />
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -82,7 +83,7 @@ export default function Home() {
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-sm text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
             >
               Submit Log
             </button>
