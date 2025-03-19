@@ -26,10 +26,10 @@ export default function Logs() {
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto bg-white rounded-xs shadow-md p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Log History</h2>
+          <h2 className="text-lg font-bold text-gray-800">Log History</h2>
           <Link
             to="/"
-            className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700 transition-colors text-sm"
+            className="bg-blue-800 text-white px-4 py-2 rounded-sm hover:bg-blue-700 transition-colors text-sm"
           >
             <Plus size={15} className="inline-block" /> Add New Log
           </Link>
