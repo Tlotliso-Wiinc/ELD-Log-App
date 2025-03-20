@@ -8,6 +8,7 @@ __pycache__/
 *.trip
 media/
 staticfiles/
+commands.txt
 
 # React (frontend)
 frontend/node_modules/
