@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Route } from "./+types/home";
+import { useNavigate } from 'react-router-dom';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,17 +10,56 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     currentLocation: '',
     pickupLocation: '',
     dropoffLocation: '',
     cycleHours: ''
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Form submitted:', formData);
+    saveTrip();
+  };
+
+  const saveTrip = async () => {
+
+    // Send data to backend
+    try {
+      setSubmitting(true);
+      const response = await fetch('http://localhost:8000/trips/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          driver: 1,
+          current_location: formData.currentLocation,
+          pickup_location: formData.pickupLocation,
+          dropoff_location: formData.dropoffLocation,
+          current_cycle_used: formData.cycleHours,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log('Trip saved:', result);
+
+      // Redirect to trips page
+      navigate('/trips');
+
+    } catch (err) {
+      console.error('Error saving trip:', err);
+    } finally {
+      setSubmitting(false);
+    }
+
   };
 
   return (
@@ -85,7 +125,7 @@ export default function Home() {
               type="submit"
               className="bg-blue-800 text-sm text-white py-2 px-4 rounded-sm hover:bg-blue-700 transition-colors cursor-pointer"
             >
-              Submit Trip
+              {submitting ? 'Submitting...' : 'Submit'}
             </button>
           </form>
         </div>
