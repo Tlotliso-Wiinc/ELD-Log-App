@@ -40,7 +40,7 @@ export default function Trips() {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-bold text-gray-800">Trips History</h2>
           <Link
-            to="/"
+            to="/add-trip"
             className="bg-[#008080] text-white px-4 py-2 rounded-sm hover:bg-[#043f51] transition-colors text-sm"
           >
             <Plus size={15} className="inline-block" /> Add New Trip

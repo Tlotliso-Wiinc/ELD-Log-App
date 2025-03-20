@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Route } from "./+types/home";
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Plus } from 'lucide-react';
+import { formatDateTime } from '../utils/utils';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,125 +12,97 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+interface TripEntry {
+  id: string;
+  created_at: string;
+  current_location: string;
+  pickup_location: string;
+  dropoff_location: string;
+  current_cycle_used: number;
+}
+
 export default function Home() {
+  const [trips, setTrips] = useState<TripEntry[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     currentLocation: '',
     pickupLocation: '',
     dropoffLocation: '',
     cycleHours: ''
   });
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    saveTrip();
-  };
-
-  const saveTrip = async () => {
-
-    // Send data to backend
-    try {
-      setSubmitting(true);
-      const response = await fetch('http://localhost:8000/api/trips/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          driver: 1,
-          current_location: formData.currentLocation,
-          pickup_location: formData.pickupLocation,
-          dropoff_location: formData.dropoffLocation,
-          current_cycle_used: formData.cycleHours,
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+  
+  useEffect(() => {
+    const fetchTrips = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('http://localhost:8000/api/trips/');
+        const data = await response.json();
+        setTrips(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching trips:', error);
+        setLoading(false);
       }
-      
-      const result = await response.json();
-      console.log('Trip saved:', result);
-
-      // Redirect to trips page
-      navigate('/trips');
-
-    } catch (err) {
-      console.error('Error saving trip:', err);
-    } finally {
-      setSubmitting(false);
-    }
-
-  };
+    };
+    fetchTrips();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-lg mx-auto py-8 px-4">
-        <div className="bg-white rounded-xs shadow-md p-6">
-          <h2 className="text-lg font-bold mb-6 text-gray-800 text-center">New Trip Entry</h2>
-          {/*<hr className="mb-6" />*/}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">
-                Current Location
-              </label>
-              <input
-                type="text"
-                required
-                className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                value={formData.currentLocation}
-                onChange={(e) => setFormData({...formData, currentLocation: e.target.value})}
-              />
-            </div>
-            <div className="flex space-x-4">
-              <div className="flex-1">
-                <label className="block text-xs font-medium text-gray-700 mb-2">
-                  Pickup Location
-                </label>
-                <input
-                  type="text"
-                  required
-                  className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={formData.pickupLocation}
-                  onChange={(e) => setFormData({...formData, pickupLocation: e.target.value})}
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs font-medium text-gray-700 mb-2">
-                  Dropoff Location
-                </label>
-                <input
-                  type="text"
-                  required
-                  className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={formData.dropoffLocation}
-                  onChange={(e) => setFormData({...formData, dropoffLocation: e.target.value})}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">
-                Current Cycle Used (Hours)
-              </label>
-              <input
-                type="number"
-                min="0"
-                max="24"
-                required
-                className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                value={formData.cycleHours}
-                onChange={(e) => setFormData({...formData, cycleHours: e.target.value})}
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-[#008080] text-sm text-white py-2 px-4 rounded-sm hover:bg-[#043f51] transition-colors cursor-pointer"
-            >
-              {submitting ? 'Submitting...' : 'Submit'}
-            </button>
-          </form>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-6xl mx-auto bg-white rounded-xs shadow-md p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-lg font-bold text-gray-800">Trips History</h2>
+          <Link
+            to="/add-trip"
+            className="bg-[#008080] text-white px-4 py-2 rounded-sm hover:bg-[#043f51] transition-colors text-sm"
+          >
+            <Plus size={15} className="inline-block" /> Add New Trip
+          </Link>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Current Location</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pickup</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dropoff</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cycle Hours</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"></th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">Loading...</td>
+                </tr>
+              ) : trips.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">No trips found</td>
+                </tr>
+              ) : (
+                trips.map((trip) => (
+                  <tr key={trip.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDateTime(trip.created_at)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.pickup_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.dropoff_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_cycle_used}h</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <Link
+                        to={`/trip/${trip.id}`}
+                        className="bg-transparent hover:bg-[#008080] text-[#008080] font-semibold hover:text-white py-2 px-4 border border-[#008080] hover:border-transparent rounded"
+                      >
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
