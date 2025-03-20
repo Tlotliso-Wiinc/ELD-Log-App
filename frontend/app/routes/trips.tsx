@@ -1,27 +1,58 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface TripEntry {
   id: string;
-  date: string;
-  currentLocation: string;
-  pickup: string;
-  dropoff: string;
-  cycleHours: number;
+  created_at: string;
+  current_location: string;
+  pickup_location: string;
+  dropoff_location: string;
+  current_cycle_used: number;
 }
 
 const mockTrips: TripEntry[] = [
   {
     id: "1",
-    date: "2025-03-19 14:30",
-    currentLocation: "Warehouse A",
-    pickup: "Client X",
-    dropoff: "Client Y",
-    cycleHours: 8
+    created_at: "2025-03-19 14:30",
+    current_location: "Warehouse A",
+    pickup_location: "Client X",
+    dropoff_location: "Client Y",
+    current_cycle_used: 8
   }
 ];
 
+const formatter = new Intl.DateTimeFormat('sv-SE', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false
+});
+
 export default function Trips() {
+  const [trips, setTrips] = useState<TripEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('http://localhost:8000/api/trips/');
+        const data = await response.json();
+        setTrips(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching trips:', error);
+        setLoading(false);
+      }
+    };
+    fetchTrips();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto bg-white rounded-xs shadow-md p-6">
@@ -46,15 +77,25 @@ export default function Trips() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {mockTrips.map((trip) => (
-                <tr key={trip.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.currentLocation}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.pickup}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.dropoff}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.cycleHours}h</td>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">Loading...</td>
                 </tr>
-              ))}
+              ) : trips.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">No trips found</td>
+                </tr>
+              ) : (
+                trips.map((trip) => (
+                  <tr key={trip.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatter.format(new Date(trip.created_at))}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.pickup_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.dropoff_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_cycle_used}h</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -67,7 +67,7 @@ export default function Home() {
       <div className="max-w-lg mx-auto py-8 px-4">
         <div className="bg-white rounded-xs shadow-md p-6">
           <h2 className="text-lg font-bold mb-6 text-gray-800 text-center">New Trip Entry</h2>
-          <hr className="mb-6" />
+          {/*<hr className="mb-6" />*/}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-2">
