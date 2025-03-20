@@ -6,7 +6,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGxvdGxpc28xOTkxIiwiYSI6ImNtOGhvNmczbzAzemIyanF5aGJ4MzcycTMifQ.srM8EiwddIzpHRGpvGTo5g';
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
-// More flexible type that accepts both tuples and arrays
 interface MapboxRouteProps {
     startCoords: number[]; // [longitude, latitude]
     endCoords: number[];   // [longitude, latitude]
@@ -25,6 +24,7 @@ interface MapboxRouteProps {
   const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom = 12 }) => {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
+    const [mapInitialized, setMapInitialized] = useState<boolean>(false);
     const [route, setRoute] = useState<RouteGeoJSON | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -46,105 +46,125 @@ interface MapboxRouteProps {
       
       const validStartCoords = validateCoords(startCoords);
       
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: validStartCoords,
-        zoom: zoom
-      });
+      try {
+        const newMap = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: validStartCoords,
+          zoom: zoom
+        });
   
-      // Add navigation controls
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        // Add navigation controls
+        newMap.addControl(new mapboxgl.NavigationControl(), 'top-right');
   
-      // Clean up on unmount
-      return () => {
-        if (map.current) {
-          map.current.remove();
-        }
-      };
-    }, []);
+        // Only set map and initialized state after map has loaded
+        newMap.on('load', () => {
+          map.current = newMap;
+          setMapInitialized(true);
+          console.log('Map initialized successfully');
+        });
   
-    // Add markers and fetch route when coordinates change
-    useEffect(() => {
-      if (!map.current || !startCoords || !endCoords) return;
-  
-      const validStartCoords = validateCoords(startCoords);
-      const validEndCoords = validateCoords(endCoords);
-  
-      // Clear previous markers
-      const markers = document.getElementsByClassName('mapboxgl-marker');
-      while(markers[0]) {
-        markers[0].parentNode?.removeChild(markers[0]);
+        // Clean up on unmount
+        return () => {
+          newMap.remove();
+          map.current = null;
+          setMapInitialized(false);
+        };
+      } catch (err) {
+        console.error('Error initializing map:', err);
+        setError('Failed to initialize map');
       }
+    }, [mapContainer.current]); // Only re-run when the container ref changes
   
-      // Add start marker
-      new mapboxgl.Marker({ color: '#3887be' })
-        .setLngLat(validStartCoords)
-        .addTo(map.current);
-  
-      // Add end marker
-      new mapboxgl.Marker({ color: '#f30' })
-        .setLngLat(validEndCoords)
-        .addTo(map.current);
-  
-      // Fetch the route
-      fetchRoute(validStartCoords, validEndCoords);
-  
-      // Fit bounds to include both points
-      const bounds = new mapboxgl.LngLatBounds()
-        .extend(validStartCoords)
-        .extend(validEndCoords);
+    // Add markers and fetch route when coordinates change and map is ready
+    useEffect(() => {
+      if (!mapInitialized || !map.current) return;
       
-      map.current.fitBounds(bounds, {
-        padding: 80,
-        duration: 1000
-      });
-    }, [startCoords, endCoords]);
+      try {
+        console.log('Adding markers to map');
+        const validStartCoords = validateCoords(startCoords);
+        const validEndCoords = validateCoords(endCoords);
+  
+        // Clear previous markers
+        const markers = document.getElementsByClassName('mapboxgl-marker');
+        while(markers[0]) {
+          markers[0].parentNode?.removeChild(markers[0]);
+        }
+  
+        // Add start marker
+        new mapboxgl.Marker({ color: '#3887be' })
+          .setLngLat(validStartCoords)
+          .addTo(map.current);
+  
+        // Add end marker
+        new mapboxgl.Marker({ color: '#f30' })
+          .setLngLat(validEndCoords)
+          .addTo(map.current);
+  
+        // Fetch the route
+        fetchRoute(validStartCoords, validEndCoords);
+  
+        // Fit bounds to include both points
+        const bounds = new mapboxgl.LngLatBounds()
+          .extend(validStartCoords)
+          .extend(validEndCoords);
+        
+        map.current.fitBounds(bounds, {
+          padding: 80,
+          duration: 1000
+        });
+      } catch (err) {
+        console.error('Error adding markers:', err);
+        setError('Failed to add markers to map');
+      }
+    }, [startCoords, endCoords, mapInitialized]); // Include mapInitialized in dependencies
   
     // Add route to map when route data changes
     useEffect(() => {
-      if (!map.current || !route) return;
+      if (!mapInitialized || !map.current || !route) return;
   
-      // Check if route layer already exists
-      if (map.current.getSource('route')) {
-        const source = map.current.getSource('route') as mapboxgl.GeoJSONSource;
-        source.setData(route as any);
-      } else {
-        map.current.on('load', () => {
-          // Make sure the map is loaded
-          addRouteLayer();
-        });
-  
-        // If the map is already loaded, add the route layer directly
-        if (map.current.loaded()) {
+      try {
+        // Check if route layer already exists
+        if (map.current.getSource('route')) {
+          const source = map.current.getSource('route') as mapboxgl.GeoJSONSource;
+          source.setData(route as any);
+        } else {
           addRouteLayer();
         }
+      } catch (err) {
+        console.error('Error updating route:', err);
+        setError('Failed to update route on map');
       }
-    }, [route]);
+    }, [route, mapInitialized]);
   
     const addRouteLayer = () => {
       if (!map.current || !route) return;
       
-      // Add route source and layer
-      map.current.addSource('route', {
-        type: 'geojson',
-        data: route as any
-      });
+      try {
+        // Add route source and layer
+        map.current.addSource('route', {
+          type: 'geojson',
+          data: route as any
+        });
   
-      map.current.addLayer({
-        id: 'route',
-        type: 'line',
-        source: 'route',
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': '#3887be',
-          'line-width': 5,
-          'line-opacity': 0.75
-        }
-      });
+        map.current.addLayer({
+          id: 'route',
+          type: 'line',
+          source: 'route',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          paint: {
+            'line-color': '#3887be',
+            'line-width': 5,
+            'line-opacity': 0.75
+          }
+        });
+      } catch (err) {
+        console.error('Error adding route layer:', err);
+        setError('Failed to add route layer to map');
+      }
     };
   
     const fetchRoute = async (start: [number, number], end: [number, number]) => {
