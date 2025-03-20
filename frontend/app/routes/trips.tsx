@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatDateTime } from '../utils/utils';
 
 interface TripEntry {
   id: string;
@@ -11,26 +12,6 @@ interface TripEntry {
   dropoff_location: string;
   current_cycle_used: number;
 }
-
-const mockTrips: TripEntry[] = [
-  {
-    id: "1",
-    created_at: "2025-03-19 14:30",
-    current_location: "Warehouse A",
-    pickup_location: "Client X",
-    dropoff_location: "Client Y",
-    current_cycle_used: 8
-  }
-];
-
-const formatter = new Intl.DateTimeFormat('sv-SE', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false
-});
 
 export default function Trips() {
   const [trips, setTrips] = useState<TripEntry[]>([]);
@@ -74,6 +55,7 @@ export default function Trips() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pickup</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dropoff</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cycle Hours</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"></th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -88,11 +70,19 @@ export default function Trips() {
               ) : (
                 trips.map((trip) => (
                   <tr key={trip.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatter.format(new Date(trip.created_at))}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDateTime(trip.created_at)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_location}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.pickup_location}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.dropoff_location}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_cycle_used}h</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <Link
+                        to={`/trip/${trip.id}`}
+                        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                      >
+                        View
+                      </Link>
+                    </td>
                   </tr>
                 ))
               )}
