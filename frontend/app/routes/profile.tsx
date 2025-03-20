@@ -8,7 +8,7 @@ export default function Profile() {
           <h2 className="text-lg font-bold text-gray-800">Driver Profile</h2>
           <Link
             to="/"
-            className="text-sm text-blue-800 hover:text-blue-700 flex items-center"
+            className="text-sm text-[#043f51] hover:text-[#008080] flex items-center"
           >
             ← Back to Home
           </Link>

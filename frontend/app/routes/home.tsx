@@ -123,7 +123,7 @@ export default function Home() {
             </div>
             <button
               type="submit"
-              className="bg-blue-800 text-sm text-white py-2 px-4 rounded-sm hover:bg-blue-700 transition-colors cursor-pointer"
+              className="bg-[#008080] text-sm text-white py-2 px-4 rounded-sm hover:bg-[#043f51] transition-colors cursor-pointer"
             >
               {submitting ? 'Submitting...' : 'Submit'}
             </button>

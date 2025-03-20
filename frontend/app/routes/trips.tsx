@@ -41,7 +41,7 @@ export default function Trips() {
           <h2 className="text-lg font-bold text-gray-800">Trips History</h2>
           <Link
             to="/"
-            className="bg-blue-800 text-white px-4 py-2 rounded-sm hover:bg-blue-700 transition-colors text-sm"
+            className="bg-[#008080] text-white px-4 py-2 rounded-sm hover:bg-[#043f51] transition-colors text-sm"
           >
             <Plus size={15} className="inline-block" /> Add New Trip
           </Link>
@@ -78,7 +78,7 @@ export default function Trips() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <Link
                         to={`/trip/${trip.id}`}
-                        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                        className="bg-transparent hover:bg-[#008080] text-[#008080] font-semibold hover:text-white py-2 px-4 border border-[#008080] hover:border-transparent rounded"
                       >
                         View
                       </Link>

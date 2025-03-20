@@ -36,7 +36,7 @@ function NavBar() {
   }, []);
 
   return (
-    <nav className="bg-blue-950 p-4">
+    <nav className="bg-[#043f51] p-4">
       <div className="max-w-7xl mx-auto flex items-center space-x-8">
         <span className="text-white font-semibold text-lg">
           {time}
@@ -44,13 +44,13 @@ function NavBar() {
         <div className="flex-1 flex justify-end space-x-4">
           <Link
             to="/trips"
-            className="text-sm text-white hover:bg-gray-700 px-4 py-2 rounded-md transition-colors border border-white"
+            className="text-sm text-white hover:bg-[#008080] px-4 py-2 rounded-md transition-colors border border-white"
           >
             Trips
           </Link>
           <Link
             to="/profile"
-            className="text-sm text-white hover:bg-gray-700 px-4 py-2 rounded-md transition-colors border border-white"
+            className="text-sm text-white hover:bg-[#008080] px-4 py-2 rounded-md transition-colors border border-white"
           >
             Driver Profile
           </Link>
