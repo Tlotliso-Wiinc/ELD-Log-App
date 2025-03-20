@@ -5,8 +5,8 @@ from .apiviews import DriverViewSet, TripViewSet
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r'drivers', DriverViewSet)
-router.register(r'trips', TripViewSet)
+router.register('api/drivers', DriverViewSet)
+router.register('api/trips', TripViewSet)
 
 urlpatterns = [
     path("", views.index, name="index"),
