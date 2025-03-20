@@ -11,6 +11,15 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import dj_database_url
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# reading .env file
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,13 +82,25 @@ WSGI_APPLICATION = 'eld.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=False)}
+'''
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('MYSQL_DATABASE'),
+        'USER': env('MYSQL_USER'),
+        'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
+        'HOST': env('MYSQL_HOST', 'localhost'),
+        'PORT': env('MYSQL_PORT', 3306),
+    }
+}'''
+
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-}
+}'''
 
 
 # Password validation
