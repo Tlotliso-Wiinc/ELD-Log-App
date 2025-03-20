@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDateTime } from '../utils/utils';
+import MapboxRoute from "~/components/MapboxRoute";
 
 interface TripEntry {
     id: string;
@@ -18,6 +19,10 @@ export default function Trip() {
   const [trip, setTrip] = useState<TripEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  // Example coordinates
+  const startCoords = [-122.4194, 37.7749]; // San Francisco
+  const endCoords = [-118.2437, 34.0522]; // Los Angeles
 
   useEffect(() => {
     const fetchTrip = async () => {
@@ -124,6 +129,7 @@ export default function Trip() {
 
             <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Route Map</h3>
+                <MapboxRoute startCoords={startCoords} endCoords={endCoords}  zoom={5}/>
             </div>
 
         </div>
