@@ -43,10 +43,10 @@ function NavBar() {
         </span>
         <div className="flex-1 flex justify-end space-x-4">
           <Link
-            to="/logs"
+            to="/trips"
             className="text-sm text-white hover:bg-gray-700 px-4 py-2 rounded-md transition-colors border border-white"
           >
-            Logs
+            Trips
           </Link>
           <Link
             to="/profile"

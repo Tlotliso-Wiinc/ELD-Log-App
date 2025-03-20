@@ -1,5 +1,5 @@
-import type { Route } from "./+types/home";
 import { useState } from 'react';
+import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -26,7 +26,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-lg mx-auto py-8 px-4">
         <div className="bg-white rounded-xs shadow-md p-6">
-          <h2 className="text-lg font-bold mb-6 text-gray-800 text-center">New Log Entry</h2>
+          <h2 className="text-lg font-bold mb-6 text-gray-800 text-center">New Trip Entry</h2>
           <hr className="mb-6" />
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -85,7 +85,7 @@ export default function Home() {
               type="submit"
               className="bg-blue-800 text-sm text-white py-2 px-4 rounded-sm hover:bg-blue-700 transition-colors cursor-pointer"
             >
-              Submit Log
+              Submit Trip
             </button>
           </form>
         </div>

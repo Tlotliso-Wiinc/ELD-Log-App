@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, Plus } from "lucide-react";
 
-interface LogEntry {
+interface TripEntry {
   id: string;
   date: string;
   currentLocation: string;
@@ -10,7 +10,7 @@ interface LogEntry {
   cycleHours: number;
 }
 
-const mockLogs: LogEntry[] = [
+const mockTrips: TripEntry[] = [
   {
     id: "1",
     date: "2025-03-19 14:30",
@@ -21,17 +21,17 @@ const mockLogs: LogEntry[] = [
   }
 ];
 
-export default function Logs() {
+export default function Trips() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto bg-white rounded-xs shadow-md p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold text-gray-800">Log History</h2>
+          <h2 className="text-lg font-bold text-gray-800">Trips History</h2>
           <Link
             to="/"
             className="bg-blue-800 text-white px-4 py-2 rounded-sm hover:bg-blue-700 transition-colors text-sm"
           >
-            <Plus size={15} className="inline-block" /> Add New Log
+            <Plus size={15} className="inline-block" /> Add New Trip
           </Link>
         </div>
         <div className="overflow-x-auto">
@@ -46,13 +46,13 @@ export default function Logs() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {mockLogs.map((log) => (
-                <tr key={log.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.currentLocation}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.pickup}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.dropoff}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{log.cycleHours}h</td>
+              {mockTrips.map((trip) => (
+                <tr key={trip.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.date}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.currentLocation}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.pickup}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.dropoff}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.cycleHours}h</td>
                 </tr>
               ))}
             </tbody>
