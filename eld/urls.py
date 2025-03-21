@@ -16,8 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from .views import index
 
 urlpatterns = [
-    path("", include("eldapp.urls")),
+    path("api/", include("eldapp.urls")),
     path('admin/', admin.site.urls),
+    path("", index, name="index"),
 ]
+
+# Serve static files from the /static/ URL prefix
+urlpatterns += static('/static/', document_root=settings.STATIC_ROOT)
+
+# Serve media files from the /media/ URL prefix
+urlpatterns += static('/media/', document_root=settings.MEDIA_ROOT)

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDateTime } from '../utils/utils';
 import MapboxRoute from "~/components/MapboxRoute";
+import MapboxThreePointRoute from "~/components/MapboxThreePointRoute";
 
 interface TripEntry {
     id: string;
@@ -20,9 +21,27 @@ export default function Trip() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Example coordinates
-  const startCoords = [-122.4194, 37.7749]; // San Francisco
-  const endCoords = [-118.2437, 34.0522]; // Los Angeles
+  // Example locations
+  const startCoords = [-29.301154, 27.532479];
+  const endCoords = [-29.314144, 27.483196];
+  
+  const startLocation = {
+    coordinates: [-29.301154, 27.532479], // Naledi Center, Maseru, Lesotho
+    label: "Driver Start",
+    type: 'start' as const
+  };
+  
+  const pickupLocation = {
+    coordinates: [-29.292222, 27.517892], // Khubetsoana, Maseru, Lesotho
+    label: "Pickup Location",
+    type: 'pickup' as const
+  };
+  
+  const dropoffLocation = {
+    coordinates: [-29.314144, 27.483196], // Lakeside, Maseru, Lesotho
+    label: "Dropoff Location",
+    type: 'dropoff' as const
+  };
 
   useEffect(() => {
     const fetchTrip = async () => {
@@ -64,19 +83,7 @@ export default function Trip() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="block text-xs font-medium text-gray-700 mb-2">
-                            Added Date
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={formatDateTime(trip?.created_at)}
-                            readOnly
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-2">
-                            Current Location
+                            Current/Starting Location
                         </label>
                         <input
                             type="text"
@@ -129,7 +136,19 @@ export default function Trip() {
 
             <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Route Map</h3>
-                <MapboxRoute startCoords={startCoords} endCoords={endCoords}  zoom={5}/>
+            
+                <MapboxRoute 
+                    startCoords={startCoords}
+                    endCoords={endCoords}
+                    zoom={9}
+                />
+            {/*
+                <MapboxThreePointRoute 
+                    startLocation={startLocation}
+                    pickupLocation={pickupLocation}
+                    dropoffLocation={dropoffLocation}
+                />
+            */}
             </div>
 
         </div>
