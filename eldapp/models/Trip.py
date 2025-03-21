@@ -8,6 +8,7 @@ class Trip(models.Model):
     dropoff_location = models.CharField(max_length=255)
     current_cycle_used = models.IntegerField() 
     created_at = models.DateTimeField(auto_now_add=True)
+    current_coordinates = models.JSONField(default=dict)
     
     def __str__(self):
         return f"Trip from {self.current_location} to {self.dropoff_location}"

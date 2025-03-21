@@ -16,6 +16,8 @@ interface TripEntry {
     current_cycle_used: number;
 }
 
+const GOOGLE_MAPS_API_KEY = "AIzaSyCludJGYl929LAkxzzZ3luDwEvoAQD_n58";
+
 export default function Trip() {
   const { id } = useParams();
   const [trip, setTrip] = useState<TripEntry | null>(null);
@@ -43,6 +45,42 @@ export default function Trip() {
     label: "Dropoff Location",
     type: 'dropoff' as const
   };
+
+  const googleMapsGeocode = async (address: string) => {
+    try {
+
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Google Maps Geocode Data:");
+
+      if (data["status"] !== "OK" || data["results"].length === 0) {
+        console.log("No results found for address:", address);
+        console.log(data);
+        return null;
+      }
+
+      const coords = data["results"][0]["geometry"]["location"];
+      console.log("Coordinates:", coords);
+
+      return coords;
+
+    } catch (error) {
+      console.error('Error in googleMapsGeocode:', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    //googleMapsGeocode("San Francisco, CA, USA");
+    googleMapsGeocode("Naledi Center, Maseru, Lesotho");
+  }, []);
+  
 
   useEffect(() => {
     const fetchTrip = async () => {
@@ -137,12 +175,13 @@ export default function Trip() {
 
             <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Route Map</h3>
-            
+              {/*}
                 <MapboxRoute 
                     startCoords={startCoords}
                     endCoords={endCoords}
                     zoom={9}
                 />
+              */}
             {/*
                 <MapboxThreePointRoute 
                     startLocation={startLocation}
