@@ -10,6 +10,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+const GOOGLE_MAPS_API_KEY = "AIzaSyCludJGYl929LAkxzzZ3luDwEvoAQD_n58";
+
 export default function AddTrip() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -20,17 +22,75 @@ export default function AddTrip() {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    setSubmitting(true);
     e.preventDefault();
+
+    // Geocode addresses
+    const currentLocationCoords = await googleMapsGeocode(formData.currentLocation);
+    const pickupLocationCoords = await googleMapsGeocode(formData.pickupLocation);
+    const dropoffLocationCoords = await googleMapsGeocode(formData.dropoffLocation);
+
+    if (!currentLocationCoords) {
+      alert('Invalid current location address');
+      return;
+    }
+
+    if (!pickupLocationCoords) {
+      alert('Invalid pickup location address');
+      return;
+    }
+
+    if (!dropoffLocationCoords) {
+      alert('Invalid dropoff location address');
+      return;
+    }
+
     // Handle form submission
-    saveTrip();
+    saveTrip(currentLocationCoords, pickupLocationCoords, dropoffLocationCoords);
   };
 
-  const saveTrip = async () => {
+  const googleMapsGeocode = async (address: string) => {
+    try {
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data["status"] !== "OK" || data["results"].length === 0) {
+        console.log("No results found for address:", address);
+        console.log(data);
+        return null;
+      }
+      const coords = data["results"][0]["geometry"]["location"];
+      console.log("Coordinates:", coords);
+      return coords;
+    } catch (error) {
+      console.error('Error in googleMapsGeocode:', error);
+      return null;
+    }
+  };
 
+  interface Coords {
+    lat: number;
+    lng: number;
+  }
+
+  interface SaveTripPayload {
+    driver: number;
+    current_location: string;
+    pickup_location: string;
+    dropoff_location: string;
+    current_cycle_used: string;
+    current_coordinates: Coords | null;
+    pickup_coordinates: Coords | null;
+    dropoff_coordinates: Coords | null;
+  }
+
+  const saveTrip = async (currentLocationCoords: Coords | null, pickupLocationCoords: Coords | null, dropoffLocationCoords: Coords | null): Promise<void> => {
     // Send data to backend
     try {
-      setSubmitting(true);
       const response = await fetch(getHost() + '/api/trips/', {
         method: 'POST',
         headers: {
@@ -42,20 +102,23 @@ export default function AddTrip() {
           pickup_location: formData.pickupLocation,
           dropoff_location: formData.dropoffLocation,
           current_cycle_used: formData.cycleHours,
-        }),
+          current_coordinates: currentLocationCoords,
+          pickup_coordinates: pickupLocationCoords,
+          dropoff_coordinates: dropoffLocationCoords,
+        } as SaveTripPayload),
       });
       
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       
-      const result = await response.json();
+      const result: any = await response.json();
       console.log('Trip saved:', result);
 
       // Redirect to trips page
       navigate('/trips');
 
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error saving trip:', err);
     } finally {
       setSubmitting(false);
@@ -127,7 +190,7 @@ export default function AddTrip() {
               disabled={submitting}
               className="bg-[#008080] text-sm text-white py-2 px-4 rounded-sm hover:bg-[#043f51] transition-colors cursor-pointer"
             >
-              {submitting ? 'Submitting...' : 'Submit'}
+              {submitting ? 'Processing...' : 'Submit'}
             </button>
           </form>
         </div>
