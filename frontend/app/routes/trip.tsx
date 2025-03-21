@@ -22,8 +22,8 @@ export default function Trip() {
   const navigate = useNavigate();
 
   // Example locations
-  const startCoords = [-29.301154, 27.532479];
-  const endCoords = [-29.314144, 27.483196];
+  const startCoords = [-122.4194, 37.7749]; // San Francisco
+  const endCoords = [-118.2437, 34.0522]; // Los Angeles
   
   const startLocation = {
     coordinates: [-29.301154, 27.532479], // Naledi Center, Maseru, Lesotho

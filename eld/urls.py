@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import index
@@ -24,6 +24,11 @@ urlpatterns = [
     path("api/", include("eldapp.urls")),
     path('admin/', admin.site.urls),
     path("", index, name="index"),
+    re_path(r"^trips/$", index),
+    re_path(r"^trips(?:.*)/?$", index),
+    re_path(r"^profile/$", index),
+    re_path(r"^profile(?:.*)/?$", index),
+    re_path(r"^trip(?:.*)/?$", index),
 ]
 
 # Serve static files from the /static/ URL prefix
