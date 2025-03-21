@@ -10,7 +10,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyCludJGYl929LAkxzzZ3luDwEvoAQD_n58";
+const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;;
 
 export default function AddTrip() {
   const navigate = useNavigate();
