@@ -6,4 +6,5 @@ export default [
   route("/profile", "routes/profile.tsx"),
   route("/trip/:id", "routes/trip.tsx"),
   route("/add-trip", "routes/AddTrip.tsx"),
+  route("*", "routes/not-found.tsx"),
 ] satisfies RouteConfig;
