@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatDateTime } from '../utils/utils';
 import MapboxRoute from "~/components/MapboxRoute";
 import MapboxThreePointRoute from "~/components/MapboxThreePointRoute";
+import { getHost } from "../utils/utils";
 
 interface TripEntry {
     id: string;
@@ -47,7 +48,7 @@ export default function Trip() {
     const fetchTrip = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:8000/api/trips/${id}`);
+        const response = await fetch(getHost() + `/api/trips/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }

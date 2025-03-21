@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDateTime } from '../utils/utils';
+import { getHost } from "../utils/utils";
 
 interface TripEntry {
   id: string;
@@ -22,7 +23,7 @@ export default function Trips() {
     const fetchTrips = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:8000/api/trips/');
+        const response = await fetch(getHost() + '/api/trips/');
         const data = await response.json();
         setTrips(data);
         setLoading(false);

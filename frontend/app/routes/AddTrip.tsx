@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Route } from "./+types/home";
 import { useNavigate } from 'react-router-dom';
+import { getHost } from "../utils/utils";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -30,7 +31,7 @@ export default function AddTrip() {
     // Send data to backend
     try {
       setSubmitting(true);
-      const response = await fetch('http://localhost:8000/api/trips/', {
+      const response = await fetch(getHost() + '/api/trips/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,6 +124,7 @@ export default function AddTrip() {
             </div>
             <button
               type="submit"
+              disabled={submitting}
               className="bg-[#008080] text-sm text-white py-2 px-4 rounded-sm hover:bg-[#043f51] transition-colors cursor-pointer"
             >
               {submitting ? 'Submitting...' : 'Submit'}

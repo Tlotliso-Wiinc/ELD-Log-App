@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getHost } from "../utils/utils";
+import { get } from "http";
 
 interface Driver {
     id: string;
@@ -16,8 +18,6 @@ interface Driver {
     home_terminal_address: string;
 }
 
-
-
 export default function Profile() {
     const [driver, setDriver] = useState<Driver | null>(null);
     const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function Profile() {
         const fetchDriver = async () => {
           setLoading(true);
           try {
-            const response = await fetch(`http://localhost:8000/api/drivers/${id}`);
+            const response = await fetch(getHost() + `/api/drivers/${id}`);
             if (!response.ok) {
               throw new Error(`HTTP error! Status: ${response.status}`);
             }
