@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getHost } from "../utils/utils";
-import { get } from "http";
 
 interface Driver {
     id: string;
