@@ -1,6 +1,49 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+interface Driver {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone_number: string;
+    driver_id: string;
+    license_number: string;
+    trailer_number: string;
+    carrier: string;
+    main_office_address: string;
+    home_terminal_address: string;
+}
+
+
 
 export default function Profile() {
+    const [driver, setDriver] = useState<Driver | null>(null);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    const id = 1;
+
+    useEffect(() => {
+        const fetchDriver = async () => {
+          setLoading(true);
+          try {
+            const response = await fetch(`http://localhost:8000/api/drivers/${id}`);
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setDriver(data);
+            setLoading(false);
+          } catch (error) {
+            console.error('Error fetching driver:', error);
+            setLoading(false);
+          }
+        };
+        fetchDriver();
+      }, [id]);
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-4xl mx-auto bg-white rounded-xs shadow-md p-6">
@@ -24,6 +67,7 @@ export default function Profile() {
               <input
                 type="text"
                 required
+                value={driver?.driver_id || ''}
                 className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="D-123456"
               />
@@ -35,6 +79,7 @@ export default function Profile() {
               <input
                 type="text"
                 required
+                value={driver?.first_name || '' + ' ' + driver?.last_name || ''}
                 className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="John Michael Driver"
               />
@@ -52,6 +97,7 @@ export default function Profile() {
                 <input
                   type="text"
                   required
+                  value={driver?.carrier || ''}
                   className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="National Freight Services Inc."
                 />
@@ -81,6 +127,7 @@ export default function Profile() {
                 <input
                   type="text"
                   required
+                  value={driver?.license_number || ''}
                   className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="ABC-1234"
                 />
@@ -92,6 +139,7 @@ export default function Profile() {
                 <input
                   type="text"
                   required
+                  value={driver?.trailer_number || ''}
                   className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="TRL-5678"
                 />
@@ -109,6 +157,7 @@ export default function Profile() {
                 </label>
                 <textarea
                   className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-24"
+                  value={driver?.main_office_address || ''}
                   placeholder="123 Main Street, Suite 400\nAnytown, ST 12345"
                 />
               </div>
@@ -118,6 +167,7 @@ export default function Profile() {
                 </label>
                 <textarea
                   className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-24"
+                  value={driver?.home_terminal_address || ''}
                   placeholder="456 Home Terminal Road\nHometown, ST 67890"
                 />
               </div>
