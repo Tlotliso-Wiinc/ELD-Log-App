@@ -9,4 +9,8 @@ export default defineConfig({
     reactRouter(), 
     tsconfigPaths()
   ],
+  build: {
+    outDir: 'build/client',
+    assetsDir: 'static' // This changes /assets to /static
+  },
 });
