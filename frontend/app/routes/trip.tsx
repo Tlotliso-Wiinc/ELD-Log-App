@@ -16,7 +16,7 @@ interface TripEntry {
     current_cycle_used: number;
 }
 
-const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;;
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 export default function Trip() {
   const { id } = useParams();

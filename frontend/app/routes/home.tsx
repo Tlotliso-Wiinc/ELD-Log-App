@@ -33,20 +33,24 @@ export default function Home() {
     dropoffLocation: '',
     cycleHours: ''
   });
+
+  const fetchTrips = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(getHost() + '/api/trips/');
+      const data = await response.json();
+      const sortedTrips = data.sort((a: TripEntry, b: TripEntry) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      setTrips(sortedTrips);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching trips:', error);
+      setLoading(false);
+    }
+  };
   
   useEffect(() => {
-    const fetchTrips = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(getHost() + '/api/trips/');
-        const data = await response.json();
-        setTrips(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching trips:', error);
-        setLoading(false);
-      }
-    };
     fetchTrips();
   }, []);
 
