@@ -7,6 +7,11 @@ import MapboxRoute from "~/components/MapboxRoute";
 import MapboxThreePointRoute from "~/components/MapboxThreePointRoute";
 import { getHost } from "../utils/utils";
 
+interface Coords {
+  lat: number;
+  lng: number;
+}
+
 interface TripEntry {
     id: string;
     created_at: string;
@@ -14,6 +19,9 @@ interface TripEntry {
     pickup_location: string;
     dropoff_location: string;
     current_cycle_used: number;
+    current_coordinates: Coords | null;
+    pickup_coordinates: Coords | null;
+    dropoff_coordinates: Coords | null;
 }
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -23,10 +31,14 @@ export default function Trip() {
   const [trip, setTrip] = useState<TripEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [startCoords, setStartCoords] = useState<number[] | null>(null);
+  const [endCoords, setEndCoords] = useState<number[] | null>(null);
+  const [pickupCoords, setPickupCoords] = useState<number[] | null>(null);
+  const [dropoffCoords, setDropoffCoords] = useState<number[] | null>(null);
 
   // Example locations
-  const startCoords = [-122.4194, 37.7749]; // San Francisco
-  const endCoords = [-118.2437, 34.0522]; // Los Angeles
+  //const startCoords = [-122.4194, 37.7749]; // San Francisco
+  //const endCoords = [-118.2437, 34.0522]; // Los Angeles
   
   const startLocation = {
     coordinates: [-29.301154, 27.532479], // Naledi Center, Maseru, Lesotho
@@ -46,58 +58,27 @@ export default function Trip() {
     type: 'dropoff' as const
   };
 
-  const googleMapsGeocode = async (address: string) => {
+  const fetchTrip = async () => {
+    setLoading(true);
     try {
-
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
-      const response = await fetch(url);
-
+      const response = await fetch(getHost() + `/api/trips/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
       const data = await response.json();
-      console.log("Google Maps Geocode Data:");
-
-      if (data["status"] !== "OK" || data["results"].length === 0) {
-        console.log("No results found for address:", address);
-        console.log(data);
-        return null;
-      }
-
-      const coords = data["results"][0]["geometry"]["location"];
-      console.log("Coordinates:", coords);
-
-      return coords;
-
+      console.log('Trip data:', data);
+      setTrip(data);
+      setStartCoords([data.current_coordinates?.lng || 0, data.current_coordinates?.lat || 0]);
+      setPickupCoords([data.pickup_coordinates?.lng || 0, data.pickup_coordinates?.lat || 0]);
+      setEndCoords([data.dropoff_coordinates?.lng || 0, data.dropoff_coordinates?.lat || 0]);
+      setLoading(false);
     } catch (error) {
-      console.error('Error in googleMapsGeocode:', error);
-      return null;
+      console.error('Error fetching trip:', error);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    //googleMapsGeocode("San Francisco, CA, USA");
-    googleMapsGeocode("Naledi Center, Maseru, Lesotho");
-  }, []);
-  
-
-  useEffect(() => {
-    const fetchTrip = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(getHost() + `/api/trips/${id}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        setTrip(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching trip:', error);
-        setLoading(false);
-      }
-    };
     fetchTrip();
   }, [id]);
   
@@ -175,24 +156,47 @@ export default function Trip() {
 
             <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Route Map</h3>
-              {/*}
-                <MapboxRoute 
+              {loading || !startCoords || !pickupCoords || !endCoords ? 
+                (
+                  <p>Loading...</p>
+                ) : 
+                (
+                  <MapboxRoute
                     startCoords={startCoords}
                     endCoords={endCoords}
                     zoom={9}
-                />
-              */}
+                  />
+                )
+              }
+            </div>
             {/*
-                <MapboxThreePointRoute 
-                    startLocation={startLocation}
-                    pickupLocation={pickupLocation}
-                    dropoffLocation={dropoffLocation}
+               <MapboxThreePointRoute 
+                  startLocation={
+                    {
+                      coordinates: startCoords,
+                      label: "Driver Start",
+                      type: 'start' as const
+                    }
+                  }
+                  pickupLocation={
+                    {
+                      coordinates: pickupCoords,
+                      label: "Pickup Location",
+                      type: 'pickup' as const
+                    }
+                  }
+                  dropoffLocation={
+                    {
+                      coordinates: endCoords,
+                      label: "Dropoff Location",
+                      type: 'dropoff' as const
+                    }
+                  }
                 />
             */}
             </div>
 
         </div>
       </div>
-    </div>
   );
 }

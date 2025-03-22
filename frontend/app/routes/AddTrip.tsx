@@ -3,6 +3,22 @@ import type { Route } from "./+types/home";
 import { useNavigate } from 'react-router-dom';
 import { getHost } from "../utils/utils";
 
+interface Coords {
+  lat: number;
+  lng: number;
+}
+
+interface SaveTripPayload {
+  driver: number;
+  current_location: string;
+  pickup_location: string;
+  dropoff_location: string;
+  current_cycle_used: string;
+  current_coordinates: Coords | null;
+  pickup_coordinates: Coords | null;
+  dropoff_coordinates: Coords | null;
+}
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
@@ -71,22 +87,6 @@ export default function AddTrip() {
       return null;
     }
   };
-
-  interface Coords {
-    lat: number;
-    lng: number;
-  }
-
-  interface SaveTripPayload {
-    driver: number;
-    current_location: string;
-    pickup_location: string;
-    dropoff_location: string;
-    current_cycle_used: string;
-    current_coordinates: Coords | null;
-    pickup_coordinates: Coords | null;
-    dropoff_coordinates: Coords | null;
-  }
 
   const saveTrip = async (currentLocationCoords: Coords | null, pickupLocationCoords: Coords | null, dropoffLocationCoords: Coords | null): Promise<void> => {
     // Send data to backend

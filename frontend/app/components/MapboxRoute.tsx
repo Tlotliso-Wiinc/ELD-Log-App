@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Replace this with your actual Mapbox access token
-const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoidGxvdGxpc28xOTkxIiwiYSI6ImNtOGhvNmczbzAzemIyanF5aGJ4MzcycTMifQ.srM8EiwddIzpHRGpvGTo5g';
+const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 interface MapboxRouteProps {
@@ -19,6 +18,19 @@ interface RouteGeoJSON {
     type: 'LineString';
     coordinates: number[][];
   };
+}
+
+// Create a custom marker with a colored circle
+const createCustomMarker = (label: string, text: string) => {
+  const el = document.createElement('div');
+  el.className = 'custom-marker';
+  el.innerHTML = `
+                  <div class="marker-pin-${label.toLowerCase()}">
+                    <div class="marker-circle"></div>
+                  </div>
+                  <span class="marker-text">${text}</span>
+                `;
+  return el;
 }
   
 const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom = 12 }) => {
@@ -91,13 +103,16 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom 
         markers[0].parentNode?.removeChild(markers[0]);
       }
 
+      const startMarker = createCustomMarker('start', 'Start'); // #3887be'
+      const endMarker = createCustomMarker('dropoff', 'Dropoff'); // #f30
+
       // Add start marker
-      new mapboxgl.Marker({ color: '#3887be' })
-        .setLngLat(validStartCoords)
-        .addTo(map.current);
+      new mapboxgl.Marker({ element: startMarker })
+      .setLngLat(validStartCoords)
+      .addTo(map.current);
 
       // Add end marker
-      new mapboxgl.Marker({ color: '#f30' })
+      new mapboxgl.Marker({ element: endMarker })
         .setLngLat(validEndCoords)
         .addTo(map.current);
 

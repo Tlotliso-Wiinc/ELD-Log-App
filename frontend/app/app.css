@@ -13,3 +13,52 @@ body {
     color-scheme: dark;
   }
 }
+
+/* Custom Map Marker Styles */
+.custom-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.marker-pin-start {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: #047e91;
+  transform: rotate(-45deg);
+}
+
+.marker-pin-pickup {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: #068849;
+  transform: rotate(-45deg);
+}
+
+.marker-pin-dropoff {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background: #d71b1b;
+  transform: rotate(-45deg);
+}
+
+.marker-circle {
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.custom-marker span {
+  margin-top: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  color: rgb(0, 0, 0);
+}
