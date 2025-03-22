@@ -8,6 +8,7 @@ mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 interface MapboxRouteProps {
   startCoords: number[]; // [longitude, latitude]
   endCoords: number[];   // [longitude, latitude]
+  pickupCoords: number[]; // [longitude, latitude]
   zoom?: number;
 }
 
@@ -33,11 +34,12 @@ const createCustomMarker = (label: string, text: string) => {
   return el;
 }
   
-const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom = 12 }) => {
+const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, pickupCoords, endCoords, zoom = 12 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapInitialized, setMapInitialized] = useState<boolean>(false);
   const [route, setRoute] = useState<RouteGeoJSON | null>(null);
+  const [route2, setRoute2] = useState<RouteGeoJSON | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -96,6 +98,7 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom 
       console.log('Adding markers to map');
       const validStartCoords = validateCoords(startCoords);
       const validEndCoords = validateCoords(endCoords);
+      const validPickupCoords = validateCoords(pickupCoords);
 
       // Clear previous markers
       const markers = document.getElementsByClassName('mapboxgl-marker');
@@ -104,6 +107,7 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom 
       }
 
       const startMarker = createCustomMarker('start', 'Start'); // #3887be'
+      const pickupMarker = createCustomMarker('pickup', 'Pickup'); 
       const endMarker = createCustomMarker('dropoff', 'Dropoff'); // #f30
 
       // Add start marker
@@ -111,17 +115,24 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom 
       .setLngLat(validStartCoords)
       .addTo(map.current);
 
+      // Add pickup marker
+      new mapboxgl.Marker({ element: pickupMarker })
+        .setLngLat(validPickupCoords)
+        .addTo(map.current);
+
       // Add end marker
       new mapboxgl.Marker({ element: endMarker })
         .setLngLat(validEndCoords)
         .addTo(map.current);
 
-      // Fetch the route
-      fetchRoute(validStartCoords, validEndCoords);
+      // Fetch the routes
+      fetchRoute(validStartCoords, validPickupCoords);
+      fetchRoute(validPickupCoords, validEndCoords, 'route2');
 
-      // Fit bounds to include both points
+      // Fit bounds to include all the points
       const bounds = new mapboxgl.LngLatBounds()
         .extend(validStartCoords)
+        .extend(validPickupCoords)
         .extend(validEndCoords);
       
       map.current.fitBounds(bounds, {
@@ -134,38 +145,21 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom 
     }
   }, [startCoords, endCoords, mapInitialized]); // Include mapInitialized in dependencies
 
-  // Add route to map when route data changes
-  useEffect(() => {
-    if (!mapInitialized || !map.current || !route) return;
-
-    try {
-      // Check if route layer already exists
-      if (map.current.getSource('route')) {
-        const source = map.current.getSource('route') as mapboxgl.GeoJSONSource;
-        source.setData(route as any);
-      } else {
-        addRouteLayer();
-      }
-    } catch (err) {
-      console.error('Error updating route:', err);
-      setError('Failed to update route on map');
-    }
-  }, [route, mapInitialized]);
-
-  const addRouteLayer = () => {
-    if (!map.current || !route) return;
+  const addRouteLayer = (routeId: string = 'route', routeObj: RouteGeoJSON | null = route) => {
+    if (!map.current || !routeObj) return;
     
     try {
-      // Add route source and layer
-      map.current.addSource('route', {
+      // Add route source
+      map.current.addSource(routeId, {
         type: 'geojson',
-        data: route as any
+        data: routeObj as any
       });
 
+      // Add route layer
       map.current.addLayer({
-        id: 'route',
+        id: routeId,
         type: 'line',
-        source: 'route',
+        source: routeId,
         layout: {
           'line-join': 'round',
           'line-cap': 'round'
@@ -182,7 +176,7 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom 
     }
   };
 
-  const fetchRoute = async (start: [number, number], end: [number, number]) => {
+  const fetchRoute = async (start: [number, number], end: [number, number], routeId: string = 'route') => {
     try {
       setLoading(true);
       setError(null);
@@ -201,14 +195,26 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom 
       }
 
       const data = await response.json();
+      console.log('Route data:', data['routes']);
+      console.log('Route geometry data:', data['routes'][0].geometry);
+      console.log(data['uuid']);
       
       if (data.routes && data.routes.length > 0) {
         // Create GeoJSON object from the route
-        setRoute({
-          type: 'Feature',
-          properties: {},
-          geometry: data.routes[0].geometry
-        });
+        if (routeId === 'route') {
+          setRoute({
+            type: 'Feature',
+            properties: {},
+            geometry: data.routes[0].geometry
+          });
+        }
+        else if (routeId === 'route2') {
+          setRoute2({
+            type: 'Feature',
+            properties: {},
+            geometry: data.routes[0].geometry
+          });
+        }
       } else {
         throw new Error('No route found');
       }
@@ -220,6 +226,36 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, endCoords, zoom 
       setLoading(false);
     }
   };
+
+  // Add route to map when route data changes
+  useEffect(() => {
+    if (!mapInitialized || !map.current || !route || !route2) {
+      return;
+    }
+
+    try {
+      // Check if route already exists
+      if (map.current.getSource('route')) {
+        const source = map.current.getSource('route') as mapboxgl.GeoJSONSource;
+        source.setData(route as any);
+      } else {
+        addRouteLayer();
+      }
+      
+      // Check if route2 already exists
+      if (map.current.getSource('route2')) {
+        const source = map.current.getSource('route2') as mapboxgl.GeoJSONSource;
+        source.setData(route2 as any);
+      }
+      else {
+        addRouteLayer('route2', route2);
+      }
+
+    } catch (err) {
+      console.error('Error updating route:', err);
+      setError('Failed to update route on map');
+    }
+  }, [route, mapInitialized]);
 
   return (
     <div className="map-container">

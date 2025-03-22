@@ -36,28 +36,6 @@ export default function Trip() {
   const [pickupCoords, setPickupCoords] = useState<number[] | null>(null);
   const [dropoffCoords, setDropoffCoords] = useState<number[] | null>(null);
 
-  // Example locations
-  //const startCoords = [-122.4194, 37.7749]; // San Francisco
-  //const endCoords = [-118.2437, 34.0522]; // Los Angeles
-  
-  const startLocation = {
-    coordinates: [-29.301154, 27.532479], // Naledi Center, Maseru, Lesotho
-    label: "Driver Start",
-    type: 'start' as const
-  };
-  
-  const pickupLocation = {
-    coordinates: [-29.292222, 27.517892], // Khubetsoana, Maseru, Lesotho
-    label: "Pickup Location",
-    type: 'pickup' as const
-  };
-  
-  const dropoffLocation = {
-    coordinates: [-29.314144, 27.483196], // Lakeside, Maseru, Lesotho
-    label: "Dropoff Location",
-    type: 'dropoff' as const
-  };
-
   const fetchTrip = async () => {
     setLoading(true);
     try {
@@ -66,7 +44,7 @@ export default function Trip() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Trip data:', data);
+      //console.log('Trip data:', data);
       setTrip(data);
       setStartCoords([data.current_coordinates?.lng || 0, data.current_coordinates?.lat || 0]);
       setPickupCoords([data.pickup_coordinates?.lng || 0, data.pickup_coordinates?.lat || 0]);
@@ -163,6 +141,7 @@ export default function Trip() {
                 (
                   <MapboxRoute
                     startCoords={startCoords}
+                    pickupCoords={pickupCoords}
                     endCoords={endCoords}
                     zoom={9}
                   />
