@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatDateTime } from '../utils/utils';
 import MapboxRoute from "~/components/MapboxRoute";
-import MapboxThreePointRoute from "~/components/MapboxThreePointRoute";
 import { getHost } from "../utils/utils";
 
 interface Coords {
@@ -148,32 +147,7 @@ export default function Trip() {
                 )
               }
             </div>
-            {/*
-               <MapboxThreePointRoute 
-                  startLocation={
-                    {
-                      coordinates: startCoords,
-                      label: "Driver Start",
-                      type: 'start' as const
-                    }
-                  }
-                  pickupLocation={
-                    {
-                      coordinates: pickupCoords,
-                      label: "Pickup Location",
-                      type: 'pickup' as const
-                    }
-                  }
-                  dropoffLocation={
-                    {
-                      coordinates: endCoords,
-                      label: "Dropoff Location",
-                      type: 'dropoff' as const
-                    }
-                  }
-                />
-            */}
-            </div>
+          </div>
 
         </div>
       </div>

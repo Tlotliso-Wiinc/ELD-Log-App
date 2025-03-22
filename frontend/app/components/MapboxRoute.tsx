@@ -166,8 +166,8 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, pickupCoords, en
         },
         paint: {
           'line-color': '#3887be',
-          'line-width': 5,
-          'line-opacity': 0.75
+          'line-width': 10,
+          'line-opacity': 0.85
         }
       });
     } catch (err) {
