@@ -166,7 +166,7 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, pickupCoords, en
         },
         paint: {
           'line-color': '#3887be',
-          'line-width': 10,
+          'line-width': 6,
           'line-opacity': 0.85
         }
       });
@@ -197,7 +197,8 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, pickupCoords, en
       const data = await response.json();
       console.log('Route data:', data['routes']);
       console.log('Route geometry data:', data['routes'][0].geometry);
-      console.log(data['uuid']);
+      console.log('Route distance:', data['routes'][0].distance);
+      console.log('Route duration:', data['routes'][0].duration);
       
       if (data.routes && data.routes.length > 0) {
         // Create GeoJSON object from the route

@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { formatDateTime } from '../utils/utils';
 import MapboxRoute from "~/components/MapboxRoute";
 import { getHost } from "../utils/utils";
 
@@ -33,7 +32,7 @@ export default function Trip() {
   const [startCoords, setStartCoords] = useState<number[] | null>(null);
   const [endCoords, setEndCoords] = useState<number[] | null>(null);
   const [pickupCoords, setPickupCoords] = useState<number[] | null>(null);
-  const [dropoffCoords, setDropoffCoords] = useState<number[] | null>(null);
+  const [loadingRoutes, setLoadingRoutes] = useState<boolean>(false);
 
   const fetchTrip = async () => {
     setLoading(true);
@@ -77,62 +76,62 @@ export default function Trip() {
             {/* Trip Information */}
             <div key={trip?.id} className="border-t pt-6">
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Trip Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-2">
-                            Current/Starting Location
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={trip?.current_location}
-                            readOnly
-                        />
+                <div className="max-w-xl mx-auto px-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div className="mb-0">
+                      <p className="text-xs mb-2">
+                        <span className="text-gray-700">Starting Location: </span>
+                        <span className="font-bold">{trip?.current_location}</span>
+                      </p>
+                      <p className="text-xs mb-2">
+                        <span className="text-gray-700">Pickup Location: </span>
+                        <span className="font-bold">{trip?.pickup_location}</span>
+                      </p>
                     </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-2">
-                            Pickup Location
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={trip?.pickup_location}
-                            readOnly
-                        />
+                    <div className="mb-0">
+                      <p className="text-xs mb-2">
+                        <span className="text-gray-700">Dropoff Location: </span>
+                        <span className="font-bold">{trip?.dropoff_location}</span>
+                      </p>
+                      <p className="text-xs">
+                        <span className="text-gray-700"> Current Cycle Used: </span>
+                        <span className="font-bold">{trip?.current_cycle_used}</span>
+                      </p>
                     </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-2">
-                            Dropoff Location
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={trip?.dropoff_location}
-                            readOnly
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-2">
-                            Current Cycle Used
-                        </label>
-                        <input
-                            type="number"
-                            required
-                            className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={trip?.current_cycle_used}
-                            readOnly
-                        />
-                    </div>
+                  </div>
                 </div>
             </div>
 
-            <hr className="my-10 mb-6" />
+            <hr className="mb-6 mt-0" />
 
             <div>
-                <h3 className="text-sm font-semibold text-gray-800 mb-4">Route Map</h3>
+              <h3 className="text-sm font-semibold text-gray-800 mb-4">Route Map</h3>
+              <div className="max-w-3xl mx-auto px-0">
+
+              {/* Trip Metrics */}
+              {(!loading && startCoords && pickupCoords) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  
+                    <div className="mb-2">
+                      <p className="text-xs mb-2">
+                        <span className="text-gray-700">Start to Pickup: </span>
+                        (Distance: <span className="font-bold">{217} km</span>, Duration: <span className="font-bold">{3} hours</span>)
+                      </p>
+                      <p className="text-xs mb-2">
+                        <span className="text-gray-700">Pickup to Dropoff: </span>
+                        (Distance: <span className="font-bold">{105} km</span>, Duration: <span className="font-bold">{2} hours</span>)
+                      </p>
+                      <p className="text-xs mb-2">
+                        <span className="text-gray-700">Whole Trip: </span>
+                        (Distance: <span className="font-bold">{105} km</span>, Duration: <span className="font-bold">{2} hours</span>)
+                      </p>
+                    </div>
+
+                </div>
+              )}
+              </div>
+
+              {/* Route Map */}
               {loading || !startCoords || !pickupCoords || !endCoords ? 
                 (
                   <p>Loading...</p>
