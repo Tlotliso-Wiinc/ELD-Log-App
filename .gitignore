@@ -7,7 +7,7 @@ __pycache__/
 *.sqlite3
 *.trip
 media/
-staticfiles/
+# staticfiles/
 # static/
 assets/
 commands.txt
