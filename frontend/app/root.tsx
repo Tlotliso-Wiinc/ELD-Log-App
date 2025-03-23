@@ -8,6 +8,7 @@ import {
 } from "react-router";
 import { useState, useEffect } from "react";
 import { Link, useNavigation } from "react-router-dom";
+import LoadingScreen from "./components/LoadingScreen";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -79,17 +80,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function HydrateFallback() {
+  return <LoadingScreen />;
+}
+
 export default function App() {
   const navigation = useNavigation();
   return (
-      <>
-      <Outlet />
+    <>
       <div
         id="detail"
         className={
           navigation.state === "loading" ? "loading" : ""
         }
       ></div>
+      <Outlet />
     </>
   );
 }
