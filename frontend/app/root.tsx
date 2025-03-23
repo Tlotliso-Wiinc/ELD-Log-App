@@ -7,7 +7,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigation } from "react-router-dom";
+import LoadingScreen from "./components/LoadingScreen";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -79,8 +80,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function HydrateFallback() {
+  return <LoadingScreen />;
+}
+
 export default function App() {
-  return <Outlet />;
+  const navigation = useNavigation();
+  return (
+    <>
+      <div
+        id="detail"
+        className={
+          navigation.state === "loading" ? "loading" : ""
+        }
+      ></div>
+      <Outlet />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
