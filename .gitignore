@@ -8,7 +8,7 @@ __pycache__/
 *.trip
 media/
 staticfiles/
-static/
+# static/
 assets/
 commands.txt
 
