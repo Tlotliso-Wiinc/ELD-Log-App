@@ -70,16 +70,16 @@ export default function Trips() {
                 </tr>
               ) : trips.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-4">No trips found</td>
+                  <td colSpan={5} className="text-center py-4 text-gray-800 text-sm">No trips found</td>
                 </tr>
               ) : (
                 trips.map((trip) => (
                   <tr key={trip.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{formatDateTime(trip.created_at)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{trip.current_location}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{trip.pickup_location}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{trip.dropoff_location}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{trip.current_cycle_used}h</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDateTime(trip.created_at)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.pickup_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.dropoff_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_cycle_used}h</td>
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">
                       <Link
                         to={`/trip/${trip.id}`}

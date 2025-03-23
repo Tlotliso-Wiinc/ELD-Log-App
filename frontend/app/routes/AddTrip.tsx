@@ -21,8 +21,8 @@ interface SaveTripPayload {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Add New Trip" },
+    { name: "description", content: "Add a new trip to your trips history" },
   ];
 }
 
