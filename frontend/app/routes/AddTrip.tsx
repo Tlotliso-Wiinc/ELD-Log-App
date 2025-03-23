@@ -188,7 +188,7 @@ export default function AddTrip() {
             <button
               type="submit"
               disabled={submitting}
-              className="bg-[#008080] text-sm text-white py-2 px-4 rounded-sm hover:bg-[#043f51] transition-colors cursor-pointer"
+              className="bg-[#008080] text-xs font-medium text-white py-2 px-4 rounded-sm hover:bg-[#043f51] transition-colors cursor-pointer"
             >
               {submitting ? 'Processing...' : 'Submit'}
             </button>

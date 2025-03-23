@@ -46,7 +46,7 @@ export default function Trips() {
           <h2 className="text-lg font-bold text-gray-800">Trips History</h2>
           <Link
             to="/add-trip"
-            className="bg-[#008080] text-white px-4 py-2 rounded-sm hover:bg-[#043f51] transition-colors text-sm"
+            className="bg-[#008080] text-white px-4 py-2 rounded-sm hover:bg-[#043f51] transition-colors text-xs"
           >
             <Plus size={15} className="inline-block" /> Add New Trip
           </Link>
@@ -75,12 +75,12 @@ export default function Trips() {
               ) : (
                 trips.map((trip) => (
                   <tr key={trip.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatDateTime(trip.created_at)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_location}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.pickup_location}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.dropoff_location}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{trip.current_cycle_used}h</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{formatDateTime(trip.created_at)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{trip.current_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{trip.pickup_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{trip.dropoff_location}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">{trip.current_cycle_used}h</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-900">
                       <Link
                         to={`/trip/${trip.id}`}
                         className="bg-transparent hover:bg-[#008080] text-[#008080] font-semibold hover:text-white py-2 px-4 border border-[#008080] hover:border-transparent rounded"

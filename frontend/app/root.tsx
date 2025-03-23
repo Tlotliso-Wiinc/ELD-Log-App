@@ -44,13 +44,13 @@ function NavBar() {
         <div className="flex-1 flex justify-end space-x-4">
           <Link
             to="/trips"
-            className="text-sm text-white hover:bg-[#008080] px-4 py-2 rounded-md transition-colors border border-white"
+            className="text-xs text-white hover:bg-[#008080] px-4 py-2 rounded-md transition-colors border border-white"
           >
             Trips
           </Link>
           <Link
             to="/profile"
-            className="text-sm text-white hover:bg-[#008080] px-4 py-2 rounded-md transition-colors border border-white"
+            className="text-xs text-white hover:bg-[#008080] px-4 py-2 rounded-md transition-colors border border-white"
           >
             Driver Profile
           </Link>
