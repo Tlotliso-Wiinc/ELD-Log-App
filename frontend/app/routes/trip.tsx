@@ -169,7 +169,7 @@ export default function Trip() {
             to="/trips"
             className="text-sm text-[#043f51] hover:text-[#008080] flex items-center"
           >
-            ← Go to Trips
+            ← Back to Trips
           </Link>
         </div>
 

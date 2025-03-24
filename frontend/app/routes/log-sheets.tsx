@@ -118,7 +118,6 @@ export default function LogSheets() {
 
       const data = await response.json();
       console.log('Route data:', data['routes']);
-      console.log('Route geometry data:', data['routes'][0].geometry);
       console.log('Route distance:', data['routes'][0].distance);
       console.log('Route duration:', data['routes'][0].duration);
       
@@ -175,6 +174,10 @@ export default function LogSheets() {
     return (meters / 1000).toFixed(2);
   };
 
+  const convertToMiles = (meters: number) => {
+    return (meters / 1609.34);
+  };
+
   const convertToHoursAndMinutes = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -187,7 +190,7 @@ export default function LogSheets() {
 
   useEffect(() => {
     fetchDriver('1');
-    //fetchTrip();
+    fetchTrip();
   }, [id]);
   
   return (
@@ -202,7 +205,9 @@ export default function LogSheets() {
             ← Go to Trips
           </Link>
         </div>
-
+      {loading || !route || !route2 || !driver || !trip ? (
+        <p>Loading...</p>
+      ) : (
         <div className="space-y-6">
             <hr className="mb-6 mt-0" />
 
@@ -214,6 +219,8 @@ export default function LogSheets() {
                     carrierName={driver?.carrier}
                     homeTerminalAddress={driver?.home_terminal_address}
                     truckNumberInfo={driver?.license_number + ' / ' + driver?.trailer_number}
+                    totalMilesDrivingToday={convertToMiles(route.properties.distance + route2.properties.distance).toFixed(0)}
+                    totalMileageToday={convertToMiles(route2.properties.distance + route.properties.distance).toFixed(0)}
                   />
                 </div>
             </div>
@@ -227,6 +234,7 @@ export default function LogSheets() {
               </div>
             </div>
         </div>
+      )}
 
       </div>
     </div>
