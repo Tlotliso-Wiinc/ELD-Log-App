@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MapboxRoute from "~/components/MapboxRoute";
 import { getHost } from "../utils/utils";
+import LogSheet from "~/components/LogSheet";
 
 interface Coords {
   lat: number;
@@ -161,7 +162,7 @@ export default function LogSheets() {
   
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-xs shadow-md p-6">
+      <div className="max-w-6xl mx-auto bg-white rounded-xs shadow-md p-6">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-lg font-bold text-gray-800">Log Sheets</h2>
           <Link
@@ -174,11 +175,11 @@ export default function LogSheets() {
 
         <div className="space-y-6">
             <hr className="mb-6 mt-0" />
-            
+
             <div className="">
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 1</h3>
                 <div className="">
-                  
+                  <LogSheet />
                 </div>
             </div>
 

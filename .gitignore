@@ -11,6 +11,7 @@ media/
 # static/
 assets/
 commands.txt
+files/
 
 # React (frontend)
 frontend/node_modules/

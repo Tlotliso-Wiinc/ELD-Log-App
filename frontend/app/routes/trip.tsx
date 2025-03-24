@@ -162,7 +162,7 @@ export default function Trip() {
   
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-xs shadow-md p-6">
+      <div className="max-w-6xl mx-auto bg-white rounded-xs shadow-md p-6">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-lg font-bold text-gray-800">Trip Details</h2>
           <Link
@@ -225,6 +225,9 @@ export default function Trip() {
                         (Distance: <span className="font-bold">{convertToKm(route2.properties.distance)} km</span>, 
                         Duration: <span className="font-bold">{convertToHoursAndMinutes(route2.properties.duration)}</span>)
                       </p>
+                    </div>
+
+                    <div className="mb-2">
                       <p className="text-xs mb-2">
                         <span className="text-gray-700">Whole Trip: </span>
                         (Distance: <span className="font-bold">{convertToKm(route2.properties.distance + route.properties.distance)} km</span>, 
@@ -237,19 +240,21 @@ export default function Trip() {
               </div>
 
               {/* Route Map */}
-              {loading || !startCoords || !pickupCoords || !endCoords ? 
-                (
-                  <p>Loading...</p>
-                ) : 
-                (
-                  <MapboxRoute
-                    startCoords={startCoords}
-                    pickupCoords={pickupCoords}
-                    endCoords={endCoords}
-                    zoom={9}
-                  />
-                )
-              }
+              <div className="max-w-3xl mx-auto px-0">
+                {loading || !startCoords || !pickupCoords || !endCoords ? 
+                  (
+                    <p>Loading...</p>
+                  ) : 
+                  (
+                    <MapboxRoute
+                      startCoords={startCoords}
+                      pickupCoords={pickupCoords}
+                      endCoords={endCoords}
+                      zoom={9}
+                    />
+                  )
+                }
+              </div>
             </div>
           </div>
 
