@@ -32,10 +32,25 @@ interface RouteGeoJSON {
   };
 }
 
+interface Driver {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  driver_id: string;
+  license_number: string;
+  trailer_number: string;
+  carrier: string;
+  main_office_address: string;
+  home_terminal_address: string;
+}
+
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 export default function LogSheets() {
   const { id } = useParams();
+  const [driver, setDriver] = useState<Driver | null>(null);
   const [trip, setTrip] = useState<TripEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const [startCoords, setStartCoords] = useState<number[] | null>(null);
@@ -47,6 +62,20 @@ export default function LogSheets() {
   const [error, setError] = useState<string | null>(null);
   const [routesError, setRoutesError] = useState<string | null>(null);
 
+  const fetchDriver = async (driverId: string) => {
+    try {
+      const response = await fetch(getHost() + `/api/drivers/${driverId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Driver data:', data);
+      setDriver(data);
+    } catch (error) {
+      console.error('Error fetching driver:', error);
+    }
+  };
+
   const fetchTrip = async () => {
     setLoading(true);
     try {
@@ -55,7 +84,7 @@ export default function LogSheets() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      //console.log('Trip data:', data);
+      console.log('Trip data:', data);
       fetchRoutes(
         [data.current_coordinates?.lng || 0, data.current_coordinates?.lat || 0], 
         [data.pickup_coordinates?.lng || 0, data.pickup_coordinates?.lat || 0], 
@@ -157,7 +186,8 @@ export default function LogSheets() {
   
 
   useEffect(() => {
-    fetchTrip();
+    fetchDriver('1');
+    //fetchTrip();
   }, [id]);
   
   return (
@@ -179,7 +209,12 @@ export default function LogSheets() {
             <div className="">
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 1</h3>
                 <div className="">
-                  <LogSheet />
+                  <LogSheet 
+                    date={{ day: '24', month: '3', year: '2025' }} 
+                    carrierName={driver?.carrier}
+                    homeTerminalAddress={driver?.home_terminal_address}
+                    truckNumberInfo={driver?.license_number + ' / ' + driver?.trailer_number}
+                  />
                 </div>
             </div>
 
