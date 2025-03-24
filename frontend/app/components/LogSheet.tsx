@@ -20,15 +20,6 @@ const LogSheet = ({
   shippingDocuments = '',
   manifestNumber = ''
 }) => {
-  
-  // Generate hour markers for the grid
-  const hourMarkers = Array.from({ length: 24 }, (_, i) => {
-    return (
-      <div key={`hour-${i}`} className="text-xs font-bold text-center" style={{ width: '4.16%' }}>
-        {i}
-      </div>
-    );
-  });
 
   // Generate the time grid for each status
   interface GenerateGridProps {
@@ -36,12 +27,53 @@ const LogSheet = ({
     index: number;
   }
 
+  const createHourMarkerLabel = (hour: number): string => {
+    if (hour === 0) {
+      return 'Minight';
+    } else if (hour === 12) {
+      return 'Noon';
+    } else if (hour < 12) {
+      return `${hour}`;
+    } else {
+      return `${hour - 12}`;
+    }
+  };
+
+  const generateGridHeader = (): React.ReactElement => {
+    return (
+      <div className="flex h-6 border-t border-black bg-gray-800 text-white" style={{ height: '50px' }}>
+        <div className="text-xs flex items-center pl-1" style={{ width: '150px' }}>
+          
+        </div>
+        <div className="flex flex-1 relative">
+          {Array.from({ length: 24 }, (_, i: number) => (
+            <div
+              className="text-xs flex items-center justify-center"
+              style={{ width: '4.16%', height: '100%' }}
+            >
+              <span className="font-bold text-xs" style={{position: 'relative', left: '-18px', top: '5px'}}>{createHourMarkerLabel(i)}</span>
+            </div>
+          ))}
+        </div>
+        <div 
+          className="w-12 pl-1 border-l border-black font-bold text-xs flex items-center justify-center" 
+          style={{position: 'relative', left: '-3px'}}
+        >
+          <span>Total (Hours)</span>
+        </div>
+      </div>
+    );
+  };
+
+
   const generateGrid = (status: string, index: number): React.ReactElement => {
     return (
       <div key={`grid-${status}`} className="flex h-6 border-t border-black">
-        <div className="w-16 border-r border-black text-xs flex items-center pl-1">
+        <div className="border-r border-black text-xs flex items-center pl-1" style={{ width: '150px' }}>
           {index}. {status}
         </div>
+
+        {/* This is where we would render the actual log data for this status */}
         <div className="flex flex-1 relative">
           {Array.from({ length: 24 }, (_, i: number) => (
             <div
@@ -49,19 +81,32 @@ const LogSheet = ({
               className="border-r border-black"
               style={{ width: '4.16%', height: '100%' }}
             >
-              {Array.from({ length: 4 }, (_, j: number) => (
-                <div
-                  key={`subcell-${status}-${i}-${j}`}
-                  className="border-r border-gray-300 h-full"
-                  style={{ width: '25%', float: 'left' }}
-                ></div>
-              ))}
+                {Array.from({ length: 4 }, (_, j: number) => (
+                  <div
+                    key={`subcell-${status}-${i}-${j}`}
+                    className="border-r border-gray-300 h-1/3"
+                    style={{ width: '25%', float: 'left' }}
+                  ></div>
+                ))}
+                {Array.from({ length: 4 }, (_, j: number) => (
+                  <div
+                    key={`subcell-${status}-${i}-${j}`}
+                    className="border-r border-t border-gray-300 h-1/3"
+                    style={{ width: '25%', float: 'left' }}
+                  ></div>
+                ))}
+                {Array.from({ length: 4 }, (_, j: number) => (
+                  <div
+                    key={`subcell-${status}-${i}-${j}`}
+                    className="border-r border-t border-gray-300 h-1/3"
+                    style={{ width: '25%', float: 'left' }}
+                  ></div>
+                ))}
             </div>
           ))}
-
-          {/* This is where we would render the actual log data for this status */}
         </div>
-        <div className="w-12 border-l border-black"></div>
+
+        <div className="w-12"></div>
       </div>
     );
   };
@@ -130,31 +175,14 @@ const LogSheet = ({
           </div>
         </div>
         
-        {/* Grid header */}
-        <div className="flex mb-0 bg-black text-white">
-          <div className="w-16"></div>
-          <div className="flex flex-1 justify-between">
-            <div className="text-xs px-1">Mid-<br/>night</div>
-            <div className="text-xs px-1">Noon</div>
-            <div className="text-xs px-1">Mid-<br/>night</div>
-          </div>
-          <div className="w-12 text-center text-xs">Total<br/>Hours</div>
-        </div>
-        
-        {/* Hour markers */}
-        <div className="flex">
-          <div className="w-16"></div>
-          <div className="flex flex-1">
-            {hourMarkers}
-          </div>
-          <div className="w-12"></div>
-        </div>
-        
         {/* Log grids */}
-        {generateGrid("Off Duty", 1)}
-        {generateGrid("Sleeper Berth", 2)}
-        {generateGrid("Driving", 3)}
-        {generateGrid("On Duty (Not Driving)", 4)}
+        <div className="mt-4">
+          {generateGridHeader()}
+          {generateGrid("Off Duty", 1)}
+          {generateGrid("Sleeper Berth", 2)}
+          {generateGrid("Driving", 3)}
+          {generateGrid("On Duty (Not Driving)", 4)}
+        </div>
         
         {/* Remarks */}
         <div className="mt-4 border border-black p-1">
