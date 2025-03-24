@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MapboxRoute from "~/components/MapboxRoute";
 import { getHost } from "../utils/utils";
+import LogSheet from "~/components/LogSheet";
 
 interface Coords {
   lat: number;
@@ -33,11 +34,10 @@ interface RouteGeoJSON {
 
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-export default function Trip() {
+export default function LogSheets() {
   const { id } = useParams();
   const [trip, setTrip] = useState<TripEntry | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const [startCoords, setStartCoords] = useState<number[] | null>(null);
   const [endCoords, setEndCoords] = useState<number[] | null>(null);
   const [pickupCoords, setPickupCoords] = useState<number[] | null>(null);
@@ -164,7 +164,7 @@ export default function Trip() {
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-6xl mx-auto bg-white rounded-xs shadow-md p-6">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-lg font-bold text-gray-800">Trip Details</h2>
+          <h2 className="text-lg font-bold text-gray-800">Log Sheets</h2>
           <Link
             to="/trips"
             className="text-sm text-[#043f51] hover:text-[#008080] flex items-center"
@@ -174,91 +174,26 @@ export default function Trip() {
         </div>
 
         <div className="space-y-6">
+            <hr className="mb-6 mt-0" />
 
-            {/* Trip Information */}
-            <div key={trip?.id} className="border-t pt-6">
-                <h3 className="text-sm font-semibold text-gray-800 mb-4">Trip Information</h3>
-                <div className="max-w-xl mx-auto px-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <div className="mb-0">
-                      <p className="text-xs mb-2">
-                        <span className="text-gray-700">Starting Location: </span>
-                        <span className="font-bold">{trip?.current_location}</span>
-                      </p>
-                      <p className="text-xs mb-2">
-                        <span className="text-gray-700">Pickup Location: </span>
-                        <span className="font-bold">{trip?.pickup_location}</span>
-                      </p>
-                    </div>
-                    <div className="mb-0">
-                      <p className="text-xs mb-2">
-                        <span className="text-gray-700">Dropoff Location: </span>
-                        <span className="font-bold">{trip?.dropoff_location}</span>
-                      </p>
-                      <p className="text-xs">
-                        <span className="text-gray-700"> Current Cycle Used: </span>
-                        <span className="font-bold">{trip?.current_cycle_used}</span>
-                      </p>
-                    </div>
-                  </div>
+            <div className="">
+                <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 1</h3>
+                <div className="">
+                  <LogSheet />
                 </div>
             </div>
 
             <hr className="mb-6 mt-0" />
 
             <div>
-              <h3 className="text-sm font-semibold text-gray-800 mb-4">Route Map</h3>
-              <div className="max-w-3xl mx-auto px-0">
+              <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 2</h3>
+              <div className="">
 
-              {/* Trip Metrics */}
-              {(route && route2) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  
-                    <div className="mb-2">
-                      <p className="text-xs mb-2">
-                        <span className="text-gray-700">Start to Pickup: </span>
-                        (Distance: <span className="font-bold">{convertToKm(route.properties.distance)} km</span>, 
-                        Duration: <span className="font-bold">{convertToHoursAndMinutes(route.properties.duration)}</span>)
-                      </p>
-                      <p className="text-xs mb-2">
-                        <span className="text-gray-700">Pickup to Dropoff: </span>
-                        (Distance: <span className="font-bold">{convertToKm(route2.properties.distance)} km</span>, 
-                        Duration: <span className="font-bold">{convertToHoursAndMinutes(route2.properties.duration)}</span>)
-                      </p>
-                    </div>
-
-                    <div className="mb-2">
-                      <p className="text-xs mb-2">
-                        <span className="text-gray-700">Whole Trip: </span>
-                        (Distance: <span className="font-bold">{convertToKm(route2.properties.distance + route.properties.distance)} km</span>, 
-                        Duration: <span className="font-bold">{convertToHoursAndMinutes(route2.properties.duration + route.properties.duration)}</span>)
-                      </p>
-                    </div>
-
-                </div>
-              )}
-              </div>
-
-              {/* Route Map */}
-              <div className="max-w-3xl mx-auto px-0">
-                {loading || !startCoords || !pickupCoords || !endCoords ? 
-                  (
-                    <p>Loading...</p>
-                  ) : 
-                  (
-                    <MapboxRoute
-                      startCoords={startCoords}
-                      pickupCoords={pickupCoords}
-                      endCoords={endCoords}
-                      zoom={9}
-                    />
-                  )
-                }
               </div>
             </div>
-          </div>
-
         </div>
+
       </div>
+    </div>
   );
 }

@@ -15,4 +15,6 @@ djangorestframework-simplejwt==5.2.0
 drf-yasg==1.21.3
 requests==2.25.1
 mysqlclient==2.1.1
+psycopg2-binary==2.8.6
 python-decouple>=3.8
+uvicorn==0.33.0

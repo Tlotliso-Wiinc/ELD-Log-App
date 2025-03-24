@@ -7,10 +7,11 @@ __pycache__/
 *.sqlite3
 *.trip
 media/
-staticfiles/
-static/
+# staticfiles/
+# static/
 assets/
 commands.txt
+files/
 
 # React (frontend)
 frontend/node_modules/
