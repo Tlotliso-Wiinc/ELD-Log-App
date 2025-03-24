@@ -199,10 +199,10 @@ export default function LogSheets() {
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-lg font-bold text-gray-800">Log Sheets</h2>
           <Link
-            to="/trips"
+            to={`/trip/${id}`}
             className="text-sm text-[#043f51] hover:text-[#008080] flex items-center"
           >
-            ← Go to Trips
+            ← Back to Trip Information
           </Link>
         </div>
       {loading || !route || !route2 || !driver || !trip ? (

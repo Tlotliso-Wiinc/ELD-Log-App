@@ -11,10 +11,10 @@ const LogSheet = ({
   homeTerminalAddress = '',
   truckNumberInfo = '',
   logData = {
-    offDuty: [],
-    sleeper: [],
-    driving: [],
-    onDuty: []
+    offDuty: [0, 1, 2, 3, 4, 5],
+    sleeper: [12, 13, 14, 15, 16, 17, 18, 19] as number[],
+    driving: [6, 7, 8, 9, 10, 11] as number[],
+    onDuty: [20, 21, 22, 23] as number[]
   },
   remarks = '',
   shippingDocuments = '',
@@ -73,7 +73,7 @@ const LogSheet = ({
           {index}. {status}
         </div>
 
-        {/* This is where we would render the actual log data for this status */}
+        {/* This is where we render the actual log data for this status */}
         <div className="flex flex-1 relative">
           {Array.from({ length: 24 }, (_, i: number) => (
             <div
@@ -81,6 +81,19 @@ const LogSheet = ({
               className="border-r border-black"
               style={{ width: '4.16%', height: '100%' }}
             >
+              {index === 1 && logData.offDuty.includes(i) && (
+                <div className="h-1/3 bg-blue-400 mt-2"></div>
+              )}
+              {index === 2 && logData.sleeper.includes(i) && (
+                <div className="h-1/3 bg-blue-400 mt-2"></div>
+              )}
+              {index === 3 && logData.driving.includes(i) && (
+                <div className="h-1/3 bg-blue-400 mt-2"></div>
+              )}
+              {index === 4 && logData.onDuty.includes(i) && (
+                <div className="h-1/3 bg-blue-400 mt-2"></div>
+              )}
+              {/*
                 {Array.from({ length: 4 }, (_, j: number) => (
                   <div
                     key={`subcell-${status}-${i}-${j}`}
@@ -102,6 +115,7 @@ const LogSheet = ({
                     style={{ width: '25%', float: 'left' }}
                   ></div>
                 ))}
+              */}
             </div>
           ))}
         </div>

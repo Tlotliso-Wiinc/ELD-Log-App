@@ -146,6 +146,10 @@ export default function Trip() {
     return (meters / 1000).toFixed(2);
   };
 
+  const convertToMiles = (meters: number) => {
+    return (meters / 1609.34).toFixed(2);
+  };
+
   const convertToHoursAndMinutes = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -201,6 +205,17 @@ export default function Trip() {
                       </p>
                     </div>
                   </div>
+                {/* View Log Sheets */}
+                {trip && route && route2 && (
+                  <div className="mx-auto px-4 text-xs mt-5 text-center">
+                      <Link
+                        to={`/trip/${trip.id}/log-sheets`}
+                        className="bg-transparent hover:bg-[#008080] text-[#008080] font-semibold hover:text-white py-2 px-4 border border-[#008080] hover:border-transparent rounded"
+                      >
+                        View Log Sheets
+                      </Link>
+                  </div>
+                )}
                 </div>
             </div>
 
@@ -217,12 +232,12 @@ export default function Trip() {
                     <div className="mb-2">
                       <p className="text-xs mb-2">
                         <span className="text-gray-700">Start to Pickup: </span>
-                        (Distance: <span className="font-bold">{convertToKm(route.properties.distance)} km</span>, 
+                        (Distance: <span className="font-bold">{convertToMiles(route.properties.distance)} miles</span>, 
                         Duration: <span className="font-bold">{convertToHoursAndMinutes(route.properties.duration)}</span>)
                       </p>
                       <p className="text-xs mb-2">
                         <span className="text-gray-700">Pickup to Dropoff: </span>
-                        (Distance: <span className="font-bold">{convertToKm(route2.properties.distance)} km</span>, 
+                        (Distance: <span className="font-bold">{convertToMiles(route2.properties.distance)} miles</span>, 
                         Duration: <span className="font-bold">{convertToHoursAndMinutes(route2.properties.duration)}</span>)
                       </p>
                     </div>
@@ -230,7 +245,7 @@ export default function Trip() {
                     <div className="mb-2">
                       <p className="text-xs mb-2">
                         <span className="text-gray-700">Whole Trip: </span>
-                        (Distance: <span className="font-bold">{convertToKm(route2.properties.distance + route.properties.distance)} km</span>, 
+                        (Distance: <span className="font-bold">{convertToMiles(route2.properties.distance + route.properties.distance)} miles</span>, 
                         Duration: <span className="font-bold">{convertToHoursAndMinutes(route2.properties.duration + route.properties.duration)}</span>)
                       </p>
                     </div>
