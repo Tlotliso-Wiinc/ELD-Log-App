@@ -45,6 +45,9 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
+    {loading ? (
+      <p>Loading...</p>
+    ) : (
       <div className="max-w-4xl mx-auto bg-white rounded-xs shadow-md p-6">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-lg font-bold text-gray-800">Driver Profile</h2>
@@ -174,6 +177,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
+    )}
     </div>
   );
 }
