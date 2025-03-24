@@ -215,7 +215,15 @@ export default function LogSheets() {
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 1</h3>
                 <div className="">
                   <LogSheet 
-                    date={{ day: '24', month: '3', year: '2025' }} 
+                    date={
+                      { 
+                        day: new Date(trip.created_at).getDate().toString(), 
+                        month: (new Date(trip.created_at).getMonth() + 1).toString(), 
+                        year: new Date().getFullYear().toString()
+                      }
+                    }
+                    from={trip.current_location}
+                    to={trip.dropoff_location}
                     carrierName={driver?.carrier}
                     homeTerminalAddress={driver?.home_terminal_address}
                     truckNumberInfo={driver?.license_number + ' / ' + driver?.trailer_number}

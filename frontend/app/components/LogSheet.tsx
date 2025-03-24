@@ -3,6 +3,7 @@ import React from 'react';
 const LogSheet = ({ 
   date = { day: '', month: '', year: '' },
   from = '',
+  to='',
   totalMilesDrivingToday = '',
   totalMileageToday = '',
   carrierName = '',
@@ -19,6 +20,7 @@ const LogSheet = ({
   shippingDocuments = '',
   manifestNumber = ''
 }) => {
+  
   // Generate hour markers for the grid
   const hourMarkers = Array.from({ length: 24 }, (_, i) => {
     return (
@@ -71,9 +73,9 @@ const LogSheet = ({
         <div className="flex justify-between items-center mb-2">
           <div className="text-md font-bold">Driver's Daily Log</div>
           <div className="flex items-center gap-1 text-xs">
-            <div className="border-b border-black px-4 text-center">{date.month}</div>
-            <div>/</div>
             <div className="border-b border-black px-4 text-center">{date.day}</div>
+            <div>/</div>
+            <div className="border-b border-black px-4 text-center">{date.month}</div>
             <div>/</div>
             <div className="border-b border-black px-4 text-center">{date.year}</div>
           </div>
@@ -81,8 +83,15 @@ const LogSheet = ({
         
         {/* From field */}
         <div className="flex mb-2">
-          <div className="w-16 font-bold text-sm">From:</div>
-          <div className="flex-1 border-b border-black">{from}</div>
+          <div className="w-1/2 flex p-4">
+            <div className="w-14 font-bold text-sm text-gray-600">From:</div>
+            <div className="flex-1 border-b border-black text-sm">{from}</div>
+          </div>
+
+          <div className="w-1/2 flex p-4">
+            <div className="w-10 font-bold text-sm text-gray-600">To:</div>
+            <div className="flex-1 border-b border-black text-sm">{to}</div>
+          </div>
         </div>
         
         {/* Total miles and Carrier info */}
@@ -90,17 +99,17 @@ const LogSheet = ({
           <div className="w-1/2 border border-black p-1 mr-1 text-sm">
             <div className="flex">
               <div className="w-1/2 border-r border-black p-1 text-center">
-                <div className="border-b border-black pb-1 text-center text-gray-600">Total Miles Driving Today</div>
+                <div className="border-b border-black pb-1 text-center text-gray-600 text-xs">Total Miles Driving Today</div>
                 <div className="text-center pt-1 font-medium">{totalMilesDrivingToday}</div>
               </div>
               <div className="w-1/2 p-1 text-center">
-                <div className="border-b border-black pb-1 text-center text-gray-600">Total Mileage Today</div>
+                <div className="border-b border-black pb-1 text-center text-gray-600 text-xs">Total Mileage Today</div>
                 <div className="text-center pt-1 font-medium">{totalMileageToday}</div>
               </div>
             </div>
           </div>
           <div className="w-1/2 border border-black p-1 text-sm">
-            <div className="border-b border-black pb-1 text-center text-gray-600">Name of Carrier or Carriers</div>
+            <div className="border-b border-black pb-1 text-center text-gray-600 text-xs">Name of Carrier or Carriers</div>
             <div className="text-center pt-1 font-medium">{carrierName}</div>
           </div>
         </div>
@@ -108,11 +117,15 @@ const LogSheet = ({
         {/* Truck info and Address */}
         <div className="flex mb-2">
           <div className="w-1/2 border border-black p-1 mr-1">
-            <div className="border-b border-black pb-1 text-center text-xs text-gray-600">Truck/Trailer and Entity Numbers or License Numbers (Show each unit)</div>
+            <div className="border-b border-black pb-1 text-center text-xs text-gray-600">
+              Truck/Trailer and Entity Numbers or License Numbers (Show each unit)
+            </div>
             <div className="text-center pt-1 font-medium text-sm">{truckNumberInfo}</div>
           </div>
           <div className="w-1/2 border border-black p-1 text-sm">
-            <div className="border-b border-black pb-1 text-center text-gray-600">Home Terminal Address</div>
+            <div className="border-b border-black pb-1 text-center text-gray-600 text-xs">
+              Home Terminal Address
+            </div>
             <div className="text-center pt-1 font-medium">{homeTerminalAddress}</div>
           </div>
         </div>
