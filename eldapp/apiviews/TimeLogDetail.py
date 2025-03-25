@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from eldapp.models import Trip
 from eldapp.serializers import TripSerializer
 
+from eldapp.services.ELDLogicEngine import ELDLogicEngine
+
 class TimeLogDetail(APIView):
     authentication_classes = ()
     permission_classes = ()
@@ -19,11 +21,12 @@ class TimeLogDetail(APIView):
         data = TripSerializer(trips, many=True).data
         return Response(data)
 
-    def post(self, request):
+    def post(self, request, pk):
         data = request.data
-        serializer = TripSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        route1_duration = data['route1_duration']
+        route2_duration = data['route2_duration']
+
+        # Generate a time log based on the duration of two routes
+        time_log = ELDLogicEngine().generateTimeLog(route1_duration, route2_duration)
+
+        return Response(time_log, status=status.HTTP_201_CREATED)
