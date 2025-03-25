@@ -256,7 +256,7 @@ export default function Trip() {
 
               {/* Route Map */}
               <div className="max-w-3xl mx-auto px-0">
-                {loading || !startCoords || !pickupCoords || !endCoords ? 
+                {loading || !startCoords || !pickupCoords || !endCoords || !route || !route2 ? 
                   (
                     <p>Loading...</p>
                   ) : 
@@ -265,6 +265,8 @@ export default function Trip() {
                       startCoords={startCoords}
                       pickupCoords={pickupCoords}
                       endCoords={endCoords}
+                      route={route}
+                      route2={route2}
                       zoom={9}
                     />
                   )

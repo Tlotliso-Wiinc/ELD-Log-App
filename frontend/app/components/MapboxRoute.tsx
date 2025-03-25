@@ -10,6 +10,8 @@ interface MapboxRouteProps {
   endCoords: number[];   // [longitude, latitude]
   pickupCoords: number[]; // [longitude, latitude]
   zoom?: number;
+  route?: RouteGeoJSON | null;
+  route2?: RouteGeoJSON | null;
 }
 
 interface RouteGeoJSON {
@@ -34,12 +36,12 @@ const createCustomMarker = (label: string, text: string) => {
   return el;
 }
   
-const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, pickupCoords, endCoords, zoom = 12 }) => {
+const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, pickupCoords, endCoords, zoom = 12, route = null, route2 = null }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapInitialized, setMapInitialized] = useState<boolean>(false);
-  const [route, setRoute] = useState<RouteGeoJSON | null>(null);
-  const [route2, setRoute2] = useState<RouteGeoJSON | null>(null);
+  //const [route, setRoute] = useState<RouteGeoJSON | null>(null);
+  //const [route2, setRoute2] = useState<RouteGeoJSON | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -126,8 +128,8 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, pickupCoords, en
         .addTo(map.current);
 
       // Fetch the routes
-      fetchRoute(validStartCoords, validPickupCoords);
-      fetchRoute(validPickupCoords, validEndCoords, 'route2');
+      //fetchRoute(validStartCoords, validPickupCoords);
+      //fetchRoute(validPickupCoords, validEndCoords, 'route2');
 
       // Fit bounds to include all the points
       const bounds = new mapboxgl.LngLatBounds()
@@ -199,18 +201,22 @@ const MapboxRoute: React.FC<MapboxRouteProps> = ({ startCoords, pickupCoords, en
       if (data.routes && data.routes.length > 0) {
         // Create GeoJSON object from the route
         if (routeId === 'route') {
+        /*
           setRoute({
             type: 'Feature',
             properties: {},
             geometry: data.routes[0].geometry
           });
+        */
         }
         else if (routeId === 'route2') {
+        /*
           setRoute2({
             type: 'Feature',
             properties: {},
             geometry: data.routes[0].geometry
           });
+        */
         }
       } else {
         throw new Error('No route found');
