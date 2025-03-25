@@ -24,7 +24,7 @@ class ELDLogicEngine:
         """
         Convert seconds to hours
         """
-        return seconds / 3600
+        return round(seconds / 3600)
     
     def generateTimeLog(self, route1_duration: float, route2_duration: float):
         """
