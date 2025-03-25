@@ -11,10 +11,10 @@ const LogSheet = ({
   homeTerminalAddress = '',
   truckNumberInfo = '',
   logData = {
-    offDuty: [0, 1, 2, 3, 4, 5],
-    sleeper: [12, 13, 14, 15, 16, 17, 18, 19] as number[],
-    driving: [6, 7, 8, 9, 10, 11] as number[],
-    onDuty: [20, 21, 22, 23] as number[]
+    offDuty: [0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] as number[],
+    sleeper: [] as number[],
+    driving: [6, 7, 9, 10, 11, 12] as number[],
+    onDuty: [8, 13] as number[]
   },
   remarks = '',
   shippingDocuments = '',
@@ -38,6 +38,20 @@ const LogSheet = ({
       return `${hour - 12}`;
     }
   };
+
+  const calculateTotalHours = (index: number): number => {
+    if (index === 1) {
+      return logData.offDuty.length;
+    } else if (index === 2) {
+      return logData.sleeper.length;
+    } else if (index === 3) {
+      return logData.driving.length;
+    } else if (index === 4) {
+      return logData.onDuty.length;
+    }
+    return 0;
+  };
+  
 
   const generateGridHeader = (): React.ReactElement => {
     return (
@@ -120,7 +134,9 @@ const LogSheet = ({
           ))}
         </div>
 
-        <div className="w-12"></div>
+        <div className="w-12 text-sm font-bold flex items-center justify-center">
+          {calculateTotalHours(index)}
+        </div>
       </div>
     );
   };
