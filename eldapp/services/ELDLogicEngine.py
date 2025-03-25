@@ -57,7 +57,7 @@ class ELDLogicEngine:
   
         # Calculate the end time of the second route (dropoff)
         dropoff_time = pickup_time + self.PICKUP_DROPOFF_DURATION + int(self.convert_to_hours(route2_duration))
-        for i in range(pickup_time, dropoff_time):
+        for i in range(pickup_time + self.PICKUP_DROPOFF_DURATION, dropoff_time):
             logData['driving'].append(i)
 
         # Add the dropoff unloading time

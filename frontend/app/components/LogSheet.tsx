@@ -11,10 +11,10 @@ const LogSheet = ({
   homeTerminalAddress = '',
   truckNumberInfo = '',
   logData = {
-    offDuty: [0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] as number[],
+    offDuty: [] as number[],
     sleeper: [] as number[],
-    driving: [6, 7, 9, 10, 11, 12] as number[],
-    onDuty: [8, 13] as number[]
+    driving: [] as number[],
+    onDuty: [] as number[]
   },
   remarks = '',
   shippingDocuments = '',
@@ -73,7 +73,7 @@ const LogSheet = ({
           className="w-12 pl-1 border-l border-black font-bold text-xs flex items-center justify-center" 
           style={{position: 'relative', left: '-3px'}}
         >
-          <span>Total (Hours)</span>
+          <span>Total Hours</span>
         </div>
       </div>
     );

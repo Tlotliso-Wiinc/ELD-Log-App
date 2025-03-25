@@ -61,6 +61,7 @@ export default function LogSheets() {
   const [route2, setRoute2] = useState<RouteGeoJSON | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [routesError, setRoutesError] = useState<string | null>(null);
+  const [logData, setLogData] = useState<any | null>(null);
 
   const fetchDriver = async (driverId: string) => {
     try {
@@ -170,6 +171,31 @@ export default function LogSheets() {
     }
   };
 
+  const fetchTimeLogData = async () => {
+    try {
+      const response = await fetch(getHost() + `/api/v2/trips/${id}/time-log`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          driver: 1,
+          route1_duration: route?.properties.duration,
+          route1_distance: route?.properties.distance,
+          route2_duration: route2?.properties.duration,
+          route2_distance: route2?.properties.distance,
+        }),
+      });
+      if (!response.ok) { throw new Error(`HTTP error! Status: ${response.status}`); }
+      const data = await response.json();
+      console.log('Time log sheet data:', data);
+      setLogData(data);
+    } catch (error) {
+      console.error('Error fetching time log sheet:', error);
+    }
+  };
+  
+
   const convertToKm = (meters: number) => {
     return (meters / 1000).toFixed(2);
   };
@@ -192,6 +218,13 @@ export default function LogSheets() {
     fetchDriver('1');
     fetchTrip();
   }, [id]);
+
+  useEffect(() => {
+    if (route && route2) {
+      console.log('Lets get the time log sheet data!! Nikka!');
+      fetchTimeLogData();
+    }
+  }, [route, route2]);
   
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -205,7 +238,7 @@ export default function LogSheets() {
             ← Back to Trip Information
           </Link>
         </div>
-      {loading || !route || !route2 || !driver || !trip ? (
+      {loading || !route || !route2 || !driver || !trip || !logData ? (
         <p>Loading...</p>
       ) : (
         <div className="space-y-6">
@@ -229,6 +262,7 @@ export default function LogSheets() {
                     truckNumberInfo={driver?.license_number + ' / ' + driver?.trailer_number}
                     totalMilesDrivingToday={convertToMiles(route.properties.distance + route2.properties.distance).toFixed(0)}
                     totalMileageToday={convertToMiles(route2.properties.distance + route.properties.distance).toFixed(0)}
+                    logData={logData}
                   />
                 </div>
             </div>
