@@ -1,8 +1,9 @@
 import React from 'react';
 
 const LogSheet = ({ 
-  date = { month: '', day: '', year: '' },
+  date = { day: '', month: '', year: '' },
   from = '',
+  to='',
   totalMilesDrivingToday = '',
   totalMileageToday = '',
   carrierName = '',
@@ -10,23 +11,15 @@ const LogSheet = ({
   homeTerminalAddress = '',
   truckNumberInfo = '',
   logData = {
-    offDuty: [],
-    sleeper: [],
-    driving: [],
-    onDuty: []
+    offDuty: [] as number[],
+    sleeper: [] as number[],
+    driving: [] as number[],
+    onDuty: [] as number[]
   },
   remarks = '',
   shippingDocuments = '',
   manifestNumber = ''
 }) => {
-  // Generate hour markers for the grid
-  const hourMarkers = Array.from({ length: 24 }, (_, i) => {
-    return (
-      <div key={`hour-${i}`} className="text-xs font-bold text-center" style={{ width: '4.16%' }}>
-        {i}
-      </div>
-    );
-  });
 
   // Generate the time grid for each status
   interface GenerateGridProps {
@@ -34,12 +27,67 @@ const LogSheet = ({
     index: number;
   }
 
+  const createHourMarkerLabel = (hour: number): string => {
+    if (hour === 0) {
+      return 'Minight';
+    } else if (hour === 12) {
+      return 'Noon';
+    } else if (hour < 12) {
+      return `${hour}`;
+    } else {
+      return `${hour - 12}`;
+    }
+  };
+
+  const calculateTotalHours = (index: number): number => {
+    if (index === 1) {
+      return logData.offDuty.length;
+    } else if (index === 2) {
+      return logData.sleeper.length;
+    } else if (index === 3) {
+      return logData.driving.length;
+    } else if (index === 4) {
+      return logData.onDuty.length;
+    }
+    return 0;
+  };
+  
+
+  const generateGridHeader = (): React.ReactElement => {
+    return (
+      <div className="flex h-6 border-t border-black bg-gray-800 text-white" style={{ height: '50px' }}>
+        <div className="text-xs flex items-center pl-1" style={{ width: '150px' }}>
+          
+        </div>
+        <div className="flex flex-1 relative">
+          {Array.from({ length: 24 }, (_, i: number) => (
+            <div
+              className="text-xs flex items-center justify-center"
+              style={{ width: '4.16%', height: '100%' }}
+            >
+              <span className="font-bold text-xs" style={{position: 'relative', left: '-18px', top: '5px'}}>{createHourMarkerLabel(i)}</span>
+            </div>
+          ))}
+        </div>
+        <div 
+          className="w-12 pl-1 border-l border-black font-bold text-xs flex items-center justify-center" 
+          style={{position: 'relative', left: '-3px'}}
+        >
+          <span>Total Hours</span>
+        </div>
+      </div>
+    );
+  };
+
+
   const generateGrid = (status: string, index: number): React.ReactElement => {
     return (
       <div key={`grid-${status}`} className="flex h-6 border-t border-black">
-        <div className="w-16 border-r border-black text-xs flex items-center pl-1">
+        <div className="border-r border-black text-xs flex items-center pl-1" style={{ width: '150px' }}>
           {index}. {status}
         </div>
+
+        {/* This is where we render the actual log data for this status */}
         <div className="flex flex-1 relative">
           {Array.from({ length: 24 }, (_, i: number) => (
             <div
@@ -47,19 +95,48 @@ const LogSheet = ({
               className="border-r border-black"
               style={{ width: '4.16%', height: '100%' }}
             >
-              {Array.from({ length: 4 }, (_, j: number) => (
-                <div
-                  key={`subcell-${status}-${i}-${j}`}
-                  className="border-r border-gray-300 h-full"
-                  style={{ width: '25%', float: 'left' }}
-                ></div>
-              ))}
+              {index === 1 && logData.offDuty.includes(i) && (
+                <div className="h-1/3 bg-blue-400 mt-2"></div>
+              )}
+              {index === 2 && logData.sleeper.includes(i) && (
+                <div className="h-1/3 bg-blue-400 mt-2"></div>
+              )}
+              {index === 3 && logData.driving.includes(i) && (
+                <div className="h-1/3 bg-blue-400 mt-2"></div>
+              )}
+              {index === 4 && logData.onDuty.includes(i) && (
+                <div className="h-1/3 bg-blue-400 mt-2"></div>
+              )}
+              {/*
+                {Array.from({ length: 4 }, (_, j: number) => (
+                  <div
+                    key={`subcell-${status}-${i}-${j}`}
+                    className="border-r border-gray-300 h-1/3"
+                    style={{ width: '25%', float: 'left' }}
+                  ></div>
+                ))}
+                {Array.from({ length: 4 }, (_, j: number) => (
+                  <div
+                    key={`subcell-${status}-${i}-${j}`}
+                    className="border-r border-t border-gray-300 h-1/3"
+                    style={{ width: '25%', float: 'left' }}
+                  ></div>
+                ))}
+                {Array.from({ length: 4 }, (_, j: number) => (
+                  <div
+                    key={`subcell-${status}-${i}-${j}`}
+                    className="border-r border-t border-gray-300 h-1/3"
+                    style={{ width: '25%', float: 'left' }}
+                  ></div>
+                ))}
+              */}
             </div>
           ))}
-
-          {/* This is where we would render the actual log data for this status */}
         </div>
-        <div className="w-12 border-l border-black"></div>
+
+        <div className="w-12 text-sm font-bold flex items-center justify-center">
+          {calculateTotalHours(index)}
+        </div>
       </div>
     );
   };
@@ -69,11 +146,11 @@ const LogSheet = ({
       <div className="border border-black p-2">
         {/* Header */}
         <div className="flex justify-between items-center mb-2">
-          <div className="text-xl font-bold">Driver's Daily Log</div>
-          <div className="flex items-center gap-1">
-            <div className="border-b border-black px-4 text-center">{date.month}</div>
-            <div>/</div>
+          <div className="text-md font-bold">Driver's Daily Log</div>
+          <div className="flex items-center gap-1 text-xs">
             <div className="border-b border-black px-4 text-center">{date.day}</div>
+            <div>/</div>
+            <div className="border-b border-black px-4 text-center">{date.month}</div>
             <div>/</div>
             <div className="border-b border-black px-4 text-center">{date.year}</div>
           </div>
@@ -81,78 +158,79 @@ const LogSheet = ({
         
         {/* From field */}
         <div className="flex mb-2">
-          <div className="w-16 font-bold">From:</div>
-          <div className="flex-1 border-b border-black">{from}</div>
+          <div className="w-1/2 flex p-4">
+            <div className="w-14 font-bold text-sm text-gray-600">From:</div>
+            <div className="flex-1 border-b border-black text-sm">{from}</div>
+          </div>
+
+          <div className="w-1/2 flex p-4">
+            <div className="w-10 font-bold text-sm text-gray-600">To:</div>
+            <div className="flex-1 border-b border-black text-sm">{to}</div>
+          </div>
         </div>
         
         {/* Total miles and Carrier info */}
         <div className="flex mb-2">
-          <div className="w-1/2 border border-black p-1 mr-1">
+          <div className="w-1/2 border border-black p-1 mr-1 text-sm">
             <div className="flex">
               <div className="w-1/2 border-r border-black p-1 text-center">
-                <div className="border-b border-black pb-1 text-center">Total Miles Driving Today</div>
-                <div className="text-center pt-1">{totalMilesDrivingToday}</div>
+                <div className="border-b border-black pb-1 text-center text-gray-600 text-xs">Total Miles Driving Today</div>
+                <div className="text-center pt-1 font-medium">{totalMilesDrivingToday}</div>
               </div>
               <div className="w-1/2 p-1 text-center">
-                <div className="border-b border-black pb-1 text-center">Total Mileage Today</div>
-                <div className="text-center pt-1">{totalMileageToday}</div>
+                <div className="border-b border-black pb-1 text-center text-gray-600 text-xs">Total Mileage Today</div>
+                <div className="text-center pt-1 font-medium">{totalMileageToday}</div>
               </div>
             </div>
           </div>
-          <div className="w-1/2 border border-black p-1">
-            <div className="border-b border-black pb-1 text-center">Name of Carrier or Carriers</div>
-            <div className="text-center pt-1">{carrierName}</div>
+          <div className="w-1/2 border border-black p-1 text-sm">
+            <div className="border-b border-black pb-1 text-center text-gray-600 text-xs">Name of Carrier or Carriers</div>
+            <div className="text-center pt-1 font-medium">{carrierName}</div>
           </div>
         </div>
         
         {/* Truck info and Address */}
         <div className="flex mb-2">
           <div className="w-1/2 border border-black p-1 mr-1">
-            <div className="border-b border-black pb-1 text-center text-xs">Truck/Trailer and Entity Numbers or License Numbers (Show each unit)</div>
-            <div className="text-center pt-1">{truckNumberInfo}</div>
+            <div className="border-b border-black pb-1 text-center text-xs text-gray-600">
+              Truck/Trailer and Entity Numbers or License Numbers (Show each unit)
+            </div>
+            <div className="text-center pt-1 font-medium text-sm">{truckNumberInfo}</div>
           </div>
-          <div className="w-1/2 border border-black p-1">
-            <div className="border-b border-black pb-1 text-center">Home Terminal Address</div>
-            <div className="text-center pt-1">{homeTerminalAddress}</div>
+          <div className="w-1/2 border border-black p-1 text-sm">
+            <div className="border-b border-black pb-1 text-center text-gray-600 text-xs">
+              Home Terminal Address
+            </div>
+            <div className="text-center pt-1 font-medium">{homeTerminalAddress}</div>
           </div>
-        </div>
-        
-        {/* Grid header */}
-        <div className="flex mb-0 bg-black text-white">
-          <div className="w-16"></div>
-          <div className="flex flex-1 justify-between">
-            <div className="text-xs px-1">Mid-<br/>night</div>
-            <div className="text-xs px-1">Noon</div>
-            <div className="text-xs px-1">Mid-<br/>night</div>
-          </div>
-          <div className="w-12 text-center text-xs">Total<br/>Hours</div>
-        </div>
-        
-        {/* Hour markers */}
-        <div className="flex">
-          <div className="w-16"></div>
-          <div className="flex flex-1">
-            {hourMarkers}
-          </div>
-          <div className="w-12"></div>
         </div>
         
         {/* Log grids */}
-        {generateGrid("Off Duty", 1)}
-        {generateGrid("Sleeper Berth", 2)}
-        {generateGrid("Driving", 3)}
-        {generateGrid("On Duty (Not Driving)", 4)}
+        <div className="mt-4">
+          {generateGridHeader()}
+          {generateGrid("Off Duty", 1)}
+          {generateGrid("Sleeper Berth", 2)}
+          {generateGrid("Driving", 3)}
+          {generateGrid("On Duty (Not Driving)", 4)}
+        </div>
         
         {/* Remarks */}
         <div className="mt-4 border border-black p-1">
-          <div className="border-b border-black pb-1 font-bold">Remarks</div>
-          <div className="h-10">{remarks}</div>
+          <div className="border-b border-black pb-1 font-bold text-sm">Remarks</div>
+          <div className="h-10 text-xs">
+            <ul style={{ listStyleType: 'circle', paddingLeft: '20px' }}>
+            {/*}
+              <li>Loading, at Mafeteng, (From 8AM to 9AM)</li>
+              <li>Unloading, at Maseru, (From 1PM to 2PM)</li>
+            */}
+            </ul>
+          </div>
         </div>
         
         {/* Shipping Documents */}
         <div className="mt-2 border border-black p-1">
-          <div className="font-bold mb-1">Shipping Documents:</div>
-          <div className="mb-2">{shippingDocuments}</div>
+          <div className="font-bold mb-1 text-sm">Shipping Documents:</div>
+          <div className="mb-2 text-xs">{shippingDocuments}</div>
           
           <div className="flex">
             <div className="w-1/3 pr-1">

@@ -116,7 +116,7 @@ export default function AddTrip() {
       console.log('Trip saved:', result);
 
       // Redirect to trips page
-      navigate('/trips');
+      navigate('/trip/' + result.id);
 
     } catch (err: unknown) {
       console.error('Error saving trip:', err);
@@ -178,7 +178,7 @@ export default function AddTrip() {
               <input
                 type="number"
                 min="0"
-                max="24"
+                max="70"
                 required
                 className="text-sm w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 value={formData.cycleHours}

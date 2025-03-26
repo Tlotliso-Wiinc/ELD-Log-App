@@ -32,10 +32,25 @@ interface RouteGeoJSON {
   };
 }
 
+interface Driver {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  driver_id: string;
+  license_number: string;
+  trailer_number: string;
+  carrier: string;
+  main_office_address: string;
+  home_terminal_address: string;
+}
+
 const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 export default function LogSheets() {
   const { id } = useParams();
+  const [driver, setDriver] = useState<Driver | null>(null);
   const [trip, setTrip] = useState<TripEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const [startCoords, setStartCoords] = useState<number[] | null>(null);
@@ -46,6 +61,21 @@ export default function LogSheets() {
   const [route2, setRoute2] = useState<RouteGeoJSON | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [routesError, setRoutesError] = useState<string | null>(null);
+  const [logData, setLogData] = useState<any | null>(null);
+
+  const fetchDriver = async (driverId: string) => {
+    try {
+      const response = await fetch(getHost() + `/api/drivers/${driverId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Driver data:', data);
+      setDriver(data);
+    } catch (error) {
+      console.error('Error fetching driver:', error);
+    }
+  };
 
   const fetchTrip = async () => {
     setLoading(true);
@@ -55,7 +85,7 @@ export default function LogSheets() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
-      //console.log('Trip data:', data);
+      console.log('Trip data:', data);
       fetchRoutes(
         [data.current_coordinates?.lng || 0, data.current_coordinates?.lat || 0], 
         [data.pickup_coordinates?.lng || 0, data.pickup_coordinates?.lat || 0], 
@@ -89,7 +119,6 @@ export default function LogSheets() {
 
       const data = await response.json();
       console.log('Route data:', data['routes']);
-      console.log('Route geometry data:', data['routes'][0].geometry);
       console.log('Route distance:', data['routes'][0].distance);
       console.log('Route duration:', data['routes'][0].duration);
       
@@ -142,8 +171,37 @@ export default function LogSheets() {
     }
   };
 
+  const fetchTimeLogData = async () => {
+    try {
+      const response = await fetch(getHost() + `/api/v2/trips/${id}/time-log`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          driver: 1,
+          route1_duration: route?.properties.duration,
+          route1_distance: route?.properties.distance,
+          route2_duration: route2?.properties.duration,
+          route2_distance: route2?.properties.distance,
+        }),
+      });
+      if (!response.ok) { throw new Error(`HTTP error! Status: ${response.status}`); }
+      const data = await response.json();
+      console.log('Time log sheet data:', data);
+      setLogData(data);
+    } catch (error) {
+      console.error('Error fetching time log sheet:', error);
+    }
+  };
+  
+
   const convertToKm = (meters: number) => {
     return (meters / 1000).toFixed(2);
+  };
+
+  const convertToMiles = (meters: number) => {
+    return (meters / 1609.34);
   };
 
   const convertToHoursAndMinutes = (seconds: number) => {
@@ -157,8 +215,16 @@ export default function LogSheets() {
   
 
   useEffect(() => {
+    fetchDriver('1');
     fetchTrip();
   }, [id]);
+
+  useEffect(() => {
+    if (route && route2) {
+      console.log('Lets get the time log sheet data!! Nikka!');
+      fetchTimeLogData();
+    }
+  }, [route, route2]);
   
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -166,32 +232,44 @@ export default function LogSheets() {
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-lg font-bold text-gray-800">Log Sheets</h2>
           <Link
-            to="/trips"
+            to={`/trip/${id}`}
             className="text-sm text-[#043f51] hover:text-[#008080] flex items-center"
           >
-            ← Go to Trips
+            ← Back to Trip Information
           </Link>
         </div>
-
+      {loading || !route || !route2 || !driver || !trip || !logData ? (
+        <p>Loading...</p>
+      ) : (
         <div className="space-y-6">
             <hr className="mb-6 mt-0" />
 
             <div className="">
+              {/*}
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 1</h3>
+              */}
                 <div className="">
-                  <LogSheet />
+                  <LogSheet 
+                    date={
+                      { 
+                        day: new Date(trip.created_at).getDate().toString(), 
+                        month: (new Date(trip.created_at).getMonth() + 1).toString(), 
+                        year: new Date().getFullYear().toString()
+                      }
+                    }
+                    from={trip.current_location}
+                    to={trip.dropoff_location}
+                    carrierName={driver?.carrier}
+                    homeTerminalAddress={driver?.home_terminal_address}
+                    truckNumberInfo={driver?.license_number + ' / ' + driver?.trailer_number}
+                    totalMilesDrivingToday={convertToMiles(route.properties.distance + route2.properties.distance).toFixed(0)}
+                    totalMileageToday={convertToMiles(route2.properties.distance + route.properties.distance).toFixed(0)}
+                    logData={logData}
+                  />
                 </div>
             </div>
-
-            <hr className="mb-6 mt-0" />
-
-            <div>
-              <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 2</h3>
-              <div className="">
-
-              </div>
-            </div>
         </div>
+      )}
 
       </div>
     </div>

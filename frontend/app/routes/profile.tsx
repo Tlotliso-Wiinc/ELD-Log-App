@@ -24,22 +24,23 @@ export default function Profile() {
 
     const id = 1;
 
+    const fetchDriver = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(getHost() + `/api/drivers/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setDriver(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching driver:', error);
+        setLoading(false);
+      }
+    };
+
     useEffect(() => {
-        const fetchDriver = async () => {
-          setLoading(true);
-          try {
-            const response = await fetch(getHost() + `/api/drivers/${id}`);
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const data = await response.json();
-            setDriver(data);
-            setLoading(false);
-          } catch (error) {
-            console.error('Error fetching driver:', error);
-            setLoading(false);
-          }
-        };
         fetchDriver();
       }, [id]);
 
