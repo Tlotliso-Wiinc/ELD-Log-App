@@ -217,7 +217,14 @@ const LogSheet = ({
         {/* Remarks */}
         <div className="mt-4 border border-black p-1">
           <div className="border-b border-black pb-1 font-bold text-sm">Remarks</div>
-          <div className="h-10 text-xs">{remarks}</div>
+          <div className="h-10 text-xs">
+            <ul style={{ listStyleType: 'circle', paddingLeft: '20px' }}>
+            {/*}
+              <li>Loading, at Mafeteng, (From 8AM to 9AM)</li>
+              <li>Unloading, at Maseru, (From 1PM to 2PM)</li>
+            */}
+            </ul>
+          </div>
         </div>
         
         {/* Shipping Documents */}

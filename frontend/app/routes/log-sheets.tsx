@@ -245,7 +245,9 @@ export default function LogSheets() {
             <hr className="mb-6 mt-0" />
 
             <div className="">
+              {/*}
                 <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 1</h3>
+              */}
                 <div className="">
                   <LogSheet 
                     date={
@@ -265,15 +267,6 @@ export default function LogSheets() {
                     logData={logData}
                   />
                 </div>
-            </div>
-
-            <hr className="mb-6 mt-0" />
-
-            <div>
-              <h3 className="text-sm font-semibold text-gray-800 mb-4">Day 2</h3>
-              <div className="">
-
-              </div>
             </div>
         </div>
       )}
