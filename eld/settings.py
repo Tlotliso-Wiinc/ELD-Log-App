@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-development-key-for-local-use-only-change-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -64,8 +64,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
+    "http://localhost:8001",
+    "http://127.0.0.1:8001",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:3001",
@@ -109,18 +109,26 @@ WSGI_APPLICATION = 'eld.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=False)}
-'''
+# DATABASES = {'default': dj_database_url.config(conn_max_age=600, ssl_require=False)}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': env('MYSQL_DATABASE', 'eld_log_db'),
+#         'USER': env('MYSQL_USER', 'root'),
+#         'PASSWORD': env('MYSQL_ROOT_PASSWORD', ''),
+#         'HOST': env('MYSQL_HOST', 'localhost'),
+#         'PORT': env('MYSQL_PORT', 3306),
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         },
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('MYSQL_DATABASE'),
-        'USER': env('MYSQL_USER'),
-        'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
-        'HOST': env('MYSQL_HOST', 'localhost'),
-        'PORT': env('MYSQL_PORT', 3306),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-}'''
+}
 
 '''DATABASES = {
     'default': {

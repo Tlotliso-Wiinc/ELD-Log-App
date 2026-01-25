@@ -18,7 +18,7 @@ export const getHost = () => {
     let port = window.location.port;
 
     if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
-        return protocol + '//' + hostname + ':8000';
+        return protocol + '//' + hostname + ':8001';
     }
 
     return protocol + '//' + hostname + ':' + port;
